@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
- * A class that can be used to represent a MUD; essenially, this is a
+ * A class that can be used to represent a MUD; essentially, this is a
  * graph.
  */
 
@@ -26,7 +26,7 @@ public class MUD {
     // synchronized, but we don't really need this to be synchronised.
     private final Map<String, Vertex> vertexMap = new HashMap<String, Vertex>();
 
-    private String _startLocation = "";
+    private String _startLocation = "A";
 
     /**
      * A constructor that creates the MUD.
@@ -141,7 +141,7 @@ public class MUD {
      */
 
     /**
-     * Records the messages assocated with vertices in the graph on
+     * Records the messages associated with vertices in the graph on
      * the basis of a file with the following format:
      * location message
      * The first location is assumed to be the starting point for
@@ -177,7 +177,7 @@ public class MUD {
     }
 
     /**
-     * Records the things assocated with vertices in the graph on
+     * Records the things associated with vertices in the graph on
      * the basis of a file with the following format:
      * location thing1 thing2 ...
      */
