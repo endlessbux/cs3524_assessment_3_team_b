@@ -2,6 +2,7 @@ package cs3524.solutions.rmishout;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 
 public interface ShoutServerInterface extends Remote {
     // interface of the remote object
@@ -19,7 +20,7 @@ public interface ShoutServerInterface extends Remote {
     public String getMessage(String userName) throws RemoteException;
 
     // get user available directions
-    public String getDirections(String userName) throws RemoteException;
+    public String[] getDirections(String userName) throws RemoteException;
 
     // move the user towards a given direction
     public boolean move(String direction, String userName) throws RemoteException;

@@ -104,7 +104,7 @@ public class MUD {
 
     /**
      * Creates the edges of the graph on the basis of a file with the
-     * following fromat:
+     * following format:
      * source direction destination message
      */
     private void createEdges(String edgesfile) {
@@ -224,6 +224,16 @@ public class MUD {
      */
     public String locationInfo(String loc) {
         return getVertex(loc).toString();
+    }
+
+    /**
+     * A method to provide a HashMap with the available directions towards which
+     * a user can move
+     */
+    public String[] getDirections(String loc) {
+        HashMap<String, Edge> edgeHashMap = new HashMap<>(getVertex(loc)._routes);
+        String[] directions = edgeHashMap.keySet().toArray(new String[0]);
+        return directions;
     }
 
     /**

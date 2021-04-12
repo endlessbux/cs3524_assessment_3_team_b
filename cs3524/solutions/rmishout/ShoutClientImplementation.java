@@ -3,12 +3,13 @@ package cs3524.solutions.rmishout;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-public class ShoutClientImplementation implements ShoutClientInterface {
+public class ShoutClientImplementation implements ShoutClientInterface, Serializable {
     // client application calling methods of the remote object
     private String userName;
 
@@ -51,26 +52,34 @@ public class ShoutClientImplementation implements ShoutClientInterface {
                         A east C through the woods."
              */
             String message = server.getMessage(user.getUserName());
-            String directions = server.getDirections(user.getUserName());
+            String directions[] = server.getDirections(user.getUserName());
             String choice;
             while(true) {
-                System.out.println(String.format("%s.\nMove towards a direction:\n%s\nType 'q' to quit the game.", message, directions));
+                System.out.println(String.format("%sChoose one:\n%s\n(or type 'q' to quit the game.)", message, getPrintableDirections(directions)));
                 choice = in.readLine();
 
                 // insert break statement
                 if(choice.equals("q")) {
                     System.out.println("Quitting game...");
+                    server.disconnect(userName);
                     break;
                 }
-                // invoke the server get new message and available directions
-                boolean response = server.move(choice, user.getUserName());
-                if(response) {
-                    // get new message and available directions
-                    message = server.getMessage(user.getUserName());
-                    directions = server.getDirections(user.getUserName());
+                // check if choice is available
+                if(isChoiceAvailable(choice, directions)) {
+                    // invoke the server get new message and available directions
+                    boolean response = server.move(choice, user.getUserName());
+                    // check if user was moved successfully
+                    if(response) {
+                        // get new message and available directions
+                        message = server.getMessage(user.getUserName());
+                        directions = server.getDirections(user.getUserName());
+                    } else {
+                        // user input is valid but the user could not be moved
+                        System.err.println(String.format("Internal error: the user could not be moved to %s. Please try again.", choice));
+                    }
                 } else {
                     // user input is invalid. Print error message and retry with old message and directions
-                    System.out.println(String.format("'%s' is an invalid move. Try again.", choice));
+                    System.err.println(String.format("'%s' is an invalid move. Try again.", choice));
                 }
             }
 
@@ -91,6 +100,25 @@ public class ShoutClientImplementation implements ShoutClientInterface {
 
     public ShoutClientImplementation(String userName) {
         this.userName = userName;
+    }
+
+    public static boolean isChoiceAvailable(String toTestChoice, String[] availableChoices) {
+        boolean isAvailable = false;
+        for(String choice: availableChoices) {
+            if(toTestChoice.equals(choice)) {
+                isAvailable = true;
+                break;
+            }
+        }
+        return  isAvailable;
+    }
+
+    public static String getPrintableDirections(String[] directions) {
+        String printableDirections = "";
+        for(int i=0; i < directions.length; i++) {
+            printableDirections += "Move " + directions[i] + '\n';
+        }
+        return printableDirections;
     }
 
     @Override
