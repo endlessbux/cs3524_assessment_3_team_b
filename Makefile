@@ -1,8 +1,11 @@
 all:
-	make rmishoutclean
-	make mudclean
+	make cleanall
 	make mud
 	make rmishout
+
+cleanall:
+	make rmishoutclean
+	make mudclean
 
 rmishout:
 	javac cs3524/solutions/rmishout/ShoutServerImplementation.java
