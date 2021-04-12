@@ -2,9 +2,9 @@
 
 ### Requirements:
 - #### CGS D
-    - [ ] Allow a player to move in at least one direction through console input
+    - [x] Allow a player to move in at least one direction through console input
     - [x] Print out information from the start location
-    - [ ] Print out information associated with the new location after a move
+    - [x] Print out information associated with the new location after a move
 - #### CGS C
     - [ ] Make game multi-user
     - [ ] Users can move around the MUD world in any direction

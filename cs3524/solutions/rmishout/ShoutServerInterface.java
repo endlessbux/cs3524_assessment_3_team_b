@@ -11,10 +11,10 @@ public interface ShoutServerInterface extends Remote {
     public String[] showServers() throws RemoteException;
 
     // connect client to given server
-    public boolean connect(ShoutClientInterface client, String serverName) throws RemoteException;
+    public boolean connect(String userName, String serverName) throws RemoteException;
 
     // disconnect client from currently connected server
-    public boolean disconnect(String userName) throws RemoteException;
+    public void disconnect(String userName) throws RemoteException;
 
     // get user message
     public String getMessage(String userName) throws RemoteException;

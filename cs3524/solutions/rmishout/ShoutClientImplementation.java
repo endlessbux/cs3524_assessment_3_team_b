@@ -13,17 +13,20 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
     // client application calling methods of the remote object
     private String userName;
 
+    public ShoutClientImplementation(String userName) {
+        this.userName = userName;
+    }
+
     public static void main(String args[]) throws RemoteException {
         // retrieve user input
         if(args.length < 2) {
             System.err.println("Usage:\njava ShoutClientImplementation <hostname> <port>");
+            return;
         }
         String hostName = args[0];
         int port = Integer.parseInt(args[1]);
 
-        // specify security policy and set security manager
-        System.setProperty("java.security.policy", "rmishout.policy");
-        System.setSecurityManager(new SecurityManager());
+        setSecurityPolicy("rmishout.policy");
 
         try {
             // get server handle from RMI registry
@@ -41,7 +44,7 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
             System.out.println("Insert username:");
             String userName = in.readLine();
             ShoutClientInterface user = new ShoutClientImplementation(userName);
-            server.connect(user, ""); // TODO: Allow users to join different games (CGS B)
+            server.connect(user.getUserName(), ""); // TODO: Allow users to join different games (CGS B)
             System.out.println(String.format("Logged in as '%s'.", userName));
 
             /*
@@ -66,7 +69,7 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
                 }
                 // check if choice is available
                 if(isChoiceAvailable(choice, directions)) {
-                    // invoke the server get new message and available directions
+                    // invoke the server to move the user to new direction
                     boolean response = server.move(choice, user.getUserName());
                     // check if user was moved successfully
                     if(response) {
@@ -98,11 +101,23 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
         }
     }
 
-    public ShoutClientImplementation(String userName) {
-        this.userName = userName;
+    /**
+     * Specifies the security policy and sets a security manager
+     * @param policy String the security policy to be set
+     */
+    private static void setSecurityPolicy(String policy) {
+        System.setProperty("java.security.policy", policy);
+        System.setSecurityManager(new SecurityManager());
     }
 
-    public static boolean isChoiceAvailable(String toTestChoice, String[] availableChoices) {
+
+    /**
+     * Method to check whether the choice inserted by the user is compatible with a list of available choices
+     * @param toTestChoice String command inserted by the user
+     * @param availableChoices String[] array of available choices
+     * @return true if the inserted choice is available, false otherwise
+     */
+    private static boolean isChoiceAvailable(String toTestChoice, String[] availableChoices) {
         boolean isAvailable = false;
         for(String choice: availableChoices) {
             if(toTestChoice.equals(choice)) {
@@ -113,7 +128,12 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
         return  isAvailable;
     }
 
-    public static String getPrintableDirections(String[] directions) {
+    /**
+     * Method to convert a "raw" list of available directions to a printable output
+     * @param directions String[] array of available directions
+     * @return a printable output to display the available directions towards which a user can move
+     */
+    private static String getPrintableDirections(String[] directions) {
         String printableDirections = "";
         for(int i=0; i < directions.length; i++) {
             printableDirections += "Move " + directions[i] + '\n';
@@ -121,6 +141,13 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
         return printableDirections;
     }
 
+    private static String processInput() {
+        return null;
+    }
+
+    /**
+     * @return the client's user name
+     */
     @Override
     public String getUserName() {
         return this.userName;
