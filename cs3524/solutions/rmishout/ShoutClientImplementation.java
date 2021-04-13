@@ -29,54 +29,28 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
         setSecurityPolicy("rmishout.policy");
 
         try {
-            // get server handle from RMI registry
-            String registeredURL = String.format("rmi://%s:%d/ShoutService", hostName, port);
-            System.out.println(String.format("Looking up %s", registeredURL));
-            ShoutServerInterface server = (ShoutServerInterface) Naming.lookup(registeredURL);
-
-            // prepare input stream
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(System.in)
-            );
-
-            // create user instance
-            System.out.println("Logging in...");
-            System.out.println("Insert username:");
-            String userName = in.readLine();
-            ShoutClientInterface user = new ShoutClientImplementation(userName);
-            server.connect(user.getUserName(), ""); // TODO: Allow users to join different games (CGS B)
-            System.out.println(String.format("Logged in as '%s'.", userName));
-
-            /*
-                provide user position and available moves
-                e.g.   "A You are in a wood.
-                        Move towards a direction:
-                        A north B through the woods;
-                        A east C through the woods."
-             */
-            String message = server.getMessage(user.getUserName());
-            String directions[] = server.getDirections(user.getUserName());
-            String choice;
+            // get server handle
+            ShoutServerInterface serverHandle = getServerHandle(port, hostName);
+            ShoutClientInterface user = joinServer(serverHandle);
+            String makeAMoveMessage;
             while(true) {
-                System.out.println(String.format("%sChoose one:\n%s\n(or type 'q' to quit the game.)", message, getPrintableDirections(directions)));
-                choice = in.readLine();
+                makeAMoveMessage = getUserGameOutput(serverHandle, user);
+                String choice = getUserInput(makeAMoveMessage);
 
-                // insert break statement
                 if(choice.equals("q")) {
+                    // quit game
                     System.out.println("Quitting game...");
-                    server.disconnect(userName);
+                    serverHandle.disconnect(user.getUserName());
                     break;
-                }
-                // check if choice is available
-                if(isChoiceAvailable(choice, directions)) {
-                    // invoke the server to move the user to new direction
-                    boolean response = server.move(choice, user.getUserName());
+                } else if(choice.equals("\n")) {
+                    // refresh message
+                    System.out.println("Refreshing...");
+                    continue;
+                } else if(isDirectionAvailable(choice, serverHandle.getDirections(user.getUserName()))) {
+                    // invoke the server to move the user to given direction
+                    boolean response = serverHandle.move(choice, user.getUserName());
                     // check if user was moved successfully
-                    if(response) {
-                        // get new message and available directions
-                        message = server.getMessage(user.getUserName());
-                        directions = server.getDirections(user.getUserName());
-                    } else {
+                    if(!response) {
                         // user input is valid but the user could not be moved
                         System.err.println(String.format("Internal error: the user could not be moved to %s. Please try again.", choice));
                     }
@@ -112,15 +86,15 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
 
 
     /**
-     * Method to check whether the choice inserted by the user is compatible with a list of available choices
-     * @param toTestChoice String command inserted by the user
-     * @param availableChoices String[] array of available choices
+     * Method to check whether the direction inserted by the user is compatible with a list of available directions
+     * @param toTestInput String command inserted by the user
+     * @param availableDirections String[] array of available directions
      * @return true if the inserted choice is available, false otherwise
      */
-    private static boolean isChoiceAvailable(String toTestChoice, String[] availableChoices) {
+    private static boolean isDirectionAvailable(String toTestInput, String[] availableDirections) {
         boolean isAvailable = false;
-        for(String choice: availableChoices) {
-            if(toTestChoice.equals(choice)) {
+        for(String direction: availableDirections) {
+            if(toTestInput.equals(direction)) {
                 isAvailable = true;
                 break;
             }
@@ -141,8 +115,58 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
         return printableDirections;
     }
 
-    private static String processInput() {
-        return null;
+    /**
+     * Method to get server handle from RMI registry
+     * @param port
+     * @param hostName
+     * @return the server handle
+     */
+    private static ShoutServerInterface getServerHandle(int port, String hostName) throws MalformedURLException, NotBoundException, RemoteException {
+        // get server handle from RMI registry
+        String registeredURL = String.format("rmi://%s:%d/ShoutService", hostName, port);
+        System.out.println(String.format("Looking up %s", registeredURL));
+        return (ShoutServerInterface) Naming.lookup(registeredURL);
+    }
+
+    private static ShoutClientInterface joinServer(ShoutServerInterface serverHandle) throws IOException {
+        // create user instance
+        System.out.println("Logging in...");
+        String userName = getUserInput("Insert username:");
+        ShoutClientInterface user = new ShoutClientImplementation(userName);
+        serverHandle.connect(user.getUserName(), ""); // TODO: Allow users to join different games (CGS B)
+        System.out.println(String.format("Logged in as '%s'.", userName));
+        return user;
+    }
+
+    /**
+     * Method to get CLI output String for user to make a choice
+     * @param serverHandle
+     * @param user
+     * @return game output string
+     * @throws RemoteException
+     */
+    private static String getUserGameOutput(ShoutServerInterface serverHandle, ShoutClientInterface user) throws RemoteException {
+        String userName = user.getUserName();
+        return String.format(
+                "%sChoose one:\n%s\n(or type 'q' to quit the game.)",
+                serverHandle.getMessage(userName),
+                getPrintableDirections(
+                        serverHandle.getDirections(userName)
+                )
+        );
+    }
+
+    /**
+     * Method to get user input String from CLI
+     * @return String input by the user
+     * @throws IOException
+     */
+    private static String getUserInput(String inputMessage) throws IOException {
+        BufferedReader input = new BufferedReader(
+                new InputStreamReader(System.in)
+        );
+        System.out.println(inputMessage);
+        return input.readLine();
     }
 
     /**
