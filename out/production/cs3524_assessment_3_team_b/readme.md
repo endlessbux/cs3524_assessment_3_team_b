@@ -1,0 +1,32 @@
+# CS3524 Group Assessment
+
+### Requirements:
+- #### CGS D3-D1
+    - [x] Allow a player to move in at least one direction through console input
+    - [x] Print out information from the start location
+    - [x] Print out information associated with the new location after a move
+- #### CGS C3-C1
+    - [ ] Make game multi-user
+    - [x] Users can move around the MUD world in any direction
+    - [ ] Users can see other users in the MUD world
+    - [ ] Users can pick up things in the MUD
+    - [ ] Users can see a list of other players currently at location
+    - [ ] Users can see other players' inventories
+    - [ ] When an item is picked by a user it's removed from location
+    - [ ] Help command to show what commands are available and how to use them
+- #### CGS B3-B1
+    - [ ] More than one MUD game is instantiated by the game server
+    - [ ] User can see what MUD games are currently running on the server
+    - [ ] User can select a MUD game to join for game playing
+    - [ ] User can leave a MUD and end playing the MUD game
+- #### CGS A5
+    - [ ] User can issue a command to create a new MUD game
+    - [ ] User can join, exit a game and join another one
+    - [ ] User can have multiple games open (game focus)
+    - [ ] The server restricts the number of MUDs
+    - [ ] The server restricts the number of users logged onto a MUD
+    - [ ] Well-organised CLI
+- #### CGS A4-A1
+    - [ ] Console is refreshed automatically when changes occur
+    - [ ] Server handles clients aborting, closing, or leaving game
+    - [ ] Players can send messages to each other
