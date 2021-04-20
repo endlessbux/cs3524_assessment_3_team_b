@@ -8,12 +8,12 @@
 - #### CGS C3-C1
     - [x] Make game multi-user
     - [x] Users can move around the MUD world in any direction
-    - [ ] Users can see other users in the MUD world
+    - [x] Users can see other users in the MUD world
     - [x] Users can pick up things in the MUD
     - [x] Users can see a list of other players currently at location
-    - [ ] Users can see other players' inventories
+    - [x] Users can see other players' inventories
     - [x] When an item is picked by a user it's removed from location
-    - [ ] Help command to show what commands are available and how to use them
+    - [x] Help command to show what commands are available and how to use them
 - #### CGS B3-B1
     - [ ] More than one MUD game is instantiated by the game server
     - [ ] User can see what MUD games are currently running on the server
