@@ -2,10 +2,11 @@ package cs3524.solutions.rmishout;
 
 import cs3524.solutions.mud.MUD;
 
-import javax.management.modelmbean.RequiredModelMBean;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 public class ShoutServerImplementation implements ShoutServerInterface {
     // the remote object
@@ -13,8 +14,10 @@ public class ShoutServerImplementation implements ShoutServerInterface {
     private final String messagesfile = "assets/mymud.msg";
     private final String thingsfile = "assets/mymud.thg";
     private MUD mud;
-    // hashmap of user locations - Key: username, Value: location
+    // hashmap of users locations - Key: username, Value: location
     private HashMap<String,String> locations = new HashMap<>();
+    // hashmap of users inventories - Key: username, Value: things
+    private HashMap<String, LinkedList<String>> inventories = new HashMap<>();
 
     public ShoutServerImplementation() {
         this.mud = new MUD(this.edgesfile, this.messagesfile, this.thingsfile);
@@ -41,6 +44,7 @@ public class ShoutServerImplementation implements ShoutServerInterface {
         try {
             this.mud.addThing(mud.startLocation(), userName);
             this.locations.put(userName, this.mud.startLocation());
+            this.inventories.put(userName, new LinkedList<>());
             return true;
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -57,6 +61,7 @@ public class ShoutServerImplementation implements ShoutServerInterface {
     public void disconnect(String userName) throws RemoteException {
         this.mud.delThing(this.locations.get(userName), userName);
         this.locations.remove(userName);
+        this.inventories.remove(userName);
     }
 
     /**
@@ -78,6 +83,24 @@ public class ShoutServerImplementation implements ShoutServerInterface {
     }
 
     /**
+     * @param userName
+     * @return things available at given user's location
+     * @throws RemoteException
+     */
+    @Override
+    public String[] getPickableThings(String userName) throws RemoteException {
+        Set<String> users = this.locations.keySet();
+        LinkedList<String> pickableThings = new LinkedList<>();
+        String[] things = this.mud.getThingsAtLocation(this.locations.get(userName));
+        for(String thing: things) {
+            if(!users.contains(thing)) {
+                pickableThings.add(thing);
+            }
+        }
+        return pickableThings.toArray(new String[pickableThings.size()]);
+    }
+
+    /**
      * Move a user towards a direction
      * @param direction the direction towards which the user will be moved
      * @param userName the user to be moved
@@ -94,7 +117,78 @@ public class ShoutServerImplementation implements ShoutServerInterface {
         } catch (Exception e) {
             System.err.println(String.format("The user %s could not be moved.", userName));
             System.err.println(e.getMessage());
+        } finally {
+            return isUserMoved;
         }
-        return isUserMoved;
+    }
+
+    /**
+     * Pick a thing at user location
+     * @param thing
+     * @param userName
+     * @return true if the specified thing was picked, false otherwise
+     * @throws RemoteException
+     */
+    @Override
+    public boolean pick(String thing, String userName) throws RemoteException {
+        boolean isObjectPicked = false;
+        try {
+            String location = this.locations.get(userName);
+            if(this.mud.isThingAtLocation(thing, location)) {
+                // add thing to user inventory
+                LinkedList<String> userInventory = this.getUserInventory(userName);
+                userInventory.add(thing);
+                // update user inventory
+                this.inventories.replace(userName, userInventory);
+                // remove thing from mud location
+                this.mud.delThing(location, thing);
+                isObjectPicked = true;
+            }
+        } catch (Exception e) {
+            System.err.println(String.format("The thing '%s' could not be picked.", thing));
+            System.err.println(e.getMessage());
+        } finally {
+            return isObjectPicked;
+        }
+    }
+
+    /**
+     * @param userName
+     * @return inventory of the specified user
+     * @throws RemoteException
+     */
+    @Override
+    public LinkedList<String> getUserInventory(String userName) throws RemoteException {
+        return (LinkedList<String>)this.inventories.get(userName).clone();
+    }
+
+    /**
+     * @param userName
+     * @return the location of given user in the MUD
+     * @throws RemoteException
+     */
+    @Override
+    public String getUserLocation(String userName) throws RemoteException {
+        return this.locations.get(userName);
+    }
+
+    @Override
+    public LinkedList<String> getUsersAtLocation(String inputLocation) throws RemoteException {
+        LinkedList<String> usersAtLocation = new LinkedList<>();
+        this.locations.forEach((userName, userLocation) -> {
+            if(userLocation.equals(inputLocation)) {
+                usersAtLocation.add(userName);
+            }
+        });
+        return usersAtLocation;
+    }
+
+    /**
+     * @return an array of player's usernames connected to the MUD
+     * @throws RemoteException
+     */
+    @Override
+    public String[] getOnlinePlayers() throws RemoteException {
+        return this.locations.keySet().toArray(new String[0]);
     }
 }

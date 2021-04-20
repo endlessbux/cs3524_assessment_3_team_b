@@ -7,10 +7,7 @@ package cs3524.solutions.mud;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * A class that can be used to represent a MUD; essentially, this is a
@@ -236,6 +233,11 @@ public class MUD {
         return directions;
     }
 
+    public String[] getThingsAtLocation(String location) {
+        List<String> things = getVertex(location)._things;
+        return things.toArray(new String[things.size()]);
+    }
+
     /**
      * Get the start location for new MUD users.
      */
@@ -259,6 +261,17 @@ public class MUD {
                          String thing) {
         Vertex v = getVertex(loc);
         v._things.remove(thing);
+    }
+
+    /**
+     * Method to verify whether a thing is at a given location
+     * @param thing
+     * @param location
+     * @return true if the thing is at the given location, false otherwise
+     */
+    public boolean isThingAtLocation(String thing, String location) {
+        Vertex v = getVertex(location);
+        return v._things.contains(thing);
     }
 
     /**
