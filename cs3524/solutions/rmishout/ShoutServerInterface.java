@@ -34,5 +34,9 @@ public interface ShoutServerInterface extends Remote {
 
     public LinkedList<String> getUserInventory(String userName) throws RemoteException;
 
+    public String getUserLocation(String userName) throws RemoteException;
+
+    public LinkedList<String> getUsersAtLocation(String location) throws RemoteException;
+
     public String[] getOnlinePlayers() throws RemoteException;
 }

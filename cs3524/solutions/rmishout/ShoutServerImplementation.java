@@ -5,6 +5,7 @@ import cs3524.solutions.mud.MUD;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class ShoutServerImplementation implements ShoutServerInterface {
@@ -161,6 +162,31 @@ public class ShoutServerImplementation implements ShoutServerInterface {
         return (LinkedList<String>)this.inventories.get(userName).clone();
     }
 
+    /**
+     * @param userName
+     * @return the location of given user in the MUD
+     * @throws RemoteException
+     */
+    @Override
+    public String getUserLocation(String userName) throws RemoteException {
+        return this.locations.get(userName);
+    }
+
+    @Override
+    public LinkedList<String> getUsersAtLocation(String inputLocation) throws RemoteException {
+        LinkedList<String> usersAtLocation = new LinkedList<>();
+        this.locations.forEach((userName, userLocation) -> {
+            if(userLocation.equals(inputLocation)) {
+                usersAtLocation.add(userName);
+            }
+        });
+        return usersAtLocation;
+    }
+
+    /**
+     * @return an array of player's usernames connected to the MUD
+     * @throws RemoteException
+     */
     @Override
     public String[] getOnlinePlayers() throws RemoteException {
         return this.locations.keySet().toArray(new String[0]);
