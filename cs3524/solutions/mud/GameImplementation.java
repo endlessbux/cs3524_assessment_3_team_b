@@ -1,25 +1,27 @@
-package cs3524.solutions.rmishout;
+package cs3524.solutions.mud;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.MalformedURLException;
-import java.rmi.*;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.LinkedList;
 
-public class ShoutClientImplementation implements ShoutClientInterface, Serializable {
+public class GameImplementation implements GameInterface, Serializable {
     // client application calling methods of the remote object
     private String userName;
 
-    public ShoutClientImplementation(String userName) {
+    public GameImplementation(String userName) {
         this.userName = userName;
     }
 
     public static void main(String args[]) throws RemoteException {
         // retrieve user input
         if(args.length < 2) {
-            System.err.println("Usage:\njava ShoutClientImplementation <hostname> <port>");
+            System.err.println("Usage:\njava GameImplementation <hostname> <port>");
             return;
         }
         String hostName = args[0];
@@ -29,13 +31,14 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
 
         try {
             // get server handle
-            ShoutServerInterface serverHandle = getServerHandle(port, hostName);
-            ShoutClientInterface user = joinServer(serverHandle);
+            StubInterface serverHandle = getServerHandle(port, hostName);
+            GameInterface user = joinServer(serverHandle);
             String chooseSomething;
             boolean gameOver = false;
             while(!gameOver) {
                 chooseSomething = getUserGameOutput(serverHandle, user);
                 String choice = getUserInput(chooseSomething);
+                clearScreen();
 
                 switch(choice) {
                     case "q":
@@ -50,6 +53,7 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
                         break;
                     case "h":
                         // print help message
+                        System.out.println("Currently available actions:");
                         System.out.println(getPrintableActions(serverHandle, user));
                         break;
                     default:
@@ -79,6 +83,14 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
 
 
     /**
+     * Method to clear the command line interface
+     */
+    private static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
+    /**
      * Specifies the security policy and sets a security manager
      * @param policy String the security policy to be set
      */
@@ -103,7 +115,7 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
      * @return the result message of the user action
      * @throws RemoteException
      */
-    private static String doAction(ShoutClientInterface user, ShoutServerInterface serverHandle, String choice) throws RemoteException {
+    private static String doAction(GameInterface user, StubInterface serverHandle, String choice) throws RemoteException {
         String actionResult = String.format("Internal error:\nCould not perform '%s'. Try again.", choice);
         String[] action = getAction(choice);
         String userName = user.getUserName();
@@ -121,12 +133,13 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
                 break;
             case "show-inventory":
                 LinkedList<String> inputUserInventory = serverHandle.getUserInventory(action[1]);
-                actionResult = getPrintableInventory(inputUserInventory);
+                actionResult = String.format("%s's inventory:\n", action[1]);
+                actionResult += getPrintableInventory(inputUserInventory);
         }
         return actionResult;
     }
 
-    private static boolean isActionAvailable(ShoutClientInterface user, ShoutServerInterface serverHandle, String choice) throws RemoteException {
+    private static boolean isActionAvailable(GameInterface user, StubInterface serverHandle, String choice) throws RemoteException {
         boolean isActionAvailable = false;
         String[] action = getAction(choice);
         switch (action[0]) {
@@ -150,7 +163,7 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
      * @param toTestInput
      * @return true if toTestInput is an available direction, false otherwise
      */
-    private static boolean isThingAvailable(ShoutClientInterface user, ShoutServerInterface serverHandle, String toTestInput) throws RemoteException {
+    private static boolean isThingAvailable(GameInterface user, StubInterface serverHandle, String toTestInput) throws RemoteException {
         boolean isPickable = false;
         String userName = user.getUserName();
         String[] pickableThings = serverHandle.getPickableThings(userName);
@@ -171,7 +184,7 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
      * @return true if toTestInput is an available direction, false otherwise
      * @throws RemoteException
      */
-    private static boolean isDirectionAvailable(ShoutClientInterface user, ShoutServerInterface serverHandle, String toTestInput) throws RemoteException {
+    private static boolean isDirectionAvailable(GameInterface user, StubInterface serverHandle, String toTestInput) throws RemoteException {
         boolean isAvailable = false;
         String[] availableDirections = serverHandle.getDirections(user.getUserName());
         for(String direction: availableDirections) {
@@ -191,7 +204,7 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
     private static String getPrintableDirections(String[] directions) {
         String printableDirections = "";
         for(String direction: directions) {
-            printableDirections += "move " + direction + '\n';
+            printableDirections += "<move " + direction + ">\n";
         }
         return printableDirections;
     }
@@ -204,7 +217,7 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
     private static String getPrintableThings(String[] things) {
         String printableObjects = "";
         for(String object: things) {
-            printableObjects += "pick " + object + '\n';
+            printableObjects += "<pick " + object + ">\n";
         }
         return printableObjects;
     }
@@ -217,7 +230,7 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
     private static String getPrintableUsers(LinkedList<String> usersAtLocation) {
         String printableUsers = "";
         for(String user: usersAtLocation) {
-            printableUsers += "show-inventory " + user;
+            printableUsers += "<show-inventory " + user + ">\n";
         }
         return printableUsers;
     }
@@ -240,12 +253,12 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
      * @param user
      * @return a printable output to display the available actions that the user can take
      */
-    private static String getPrintableActions(ShoutServerInterface serverHandle, ShoutClientInterface user) throws RemoteException {
+    private static String getPrintableActions(StubInterface serverHandle, GameInterface user) throws RemoteException {
         String printableActions = "";
         String userName = user.getUserName();
         String location = serverHandle.getUserLocation(userName);
         printableActions += getPrintableDirections(serverHandle.getDirections(userName));
-        printableActions += getPrintableThings(serverHandle.getDirections(userName));
+        printableActions += getPrintableThings(serverHandle.getPickableThings(userName));
         printableActions += getPrintableUsers(serverHandle.getUsersAtLocation(location));
         return printableActions;
     }
@@ -256,11 +269,11 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
      * @param hostName
      * @return the server handle
      */
-    private static ShoutServerInterface getServerHandle(int port, String hostName) throws MalformedURLException, NotBoundException, RemoteException {
+    private static StubInterface getServerHandle(int port, String hostName) throws MalformedURLException, NotBoundException, RemoteException {
         // get server handle from RMI registry
         String registeredURL = String.format("rmi://%s:%d/ShoutService", hostName, port);
         System.out.println(String.format("Looking up %s", registeredURL));
-        return (ShoutServerInterface) Naming.lookup(registeredURL);
+        return (StubInterface) Naming.lookup(registeredURL);
     }
 
     /**
@@ -269,11 +282,11 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
      * @return the interface to control the client
      * @throws IOException
      */
-    private static ShoutClientInterface joinServer(ShoutServerInterface serverHandle) throws IOException {
+    private static GameInterface joinServer(StubInterface serverHandle) throws IOException {
         // create user instance
         System.out.println("Logging in...");
         String userName = getUserInput("Insert username:");
-        ShoutClientInterface user = new ShoutClientImplementation(userName);
+        GameInterface user = new GameImplementation(userName);
         serverHandle.connect(
                 user.getUserName(),
                 ""
@@ -294,7 +307,7 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
         return user;
     }
 
-    private static String getOnlinePlayers(ShoutServerInterface serverHandle) throws RemoteException {
+    private static String getOnlinePlayers(StubInterface serverHandle) throws RemoteException {
         String onlinePlayers = "";
         String[] players = serverHandle.getOnlinePlayers();
         for(String player: players) {
@@ -310,7 +323,7 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
      * @return game output string
      * @throws RemoteException
      */
-    private static String getUserGameOutput(ShoutServerInterface serverHandle, ShoutClientInterface user) throws RemoteException {
+    private static String getUserGameOutput(StubInterface serverHandle, GameInterface user) throws RemoteException {
         String userName = user.getUserName();
         return String.format(
                 "%sMake a move:\n(type 'h' to show available commands or 'q' to quit the game.)",
@@ -339,13 +352,19 @@ public class ShoutClientImplementation implements ShoutClientInterface, Serializ
         return this.userName;
     }
 
+    /**
+     * @param serverHandle
+     * @param user
+     * @return the list of items in the specified user's inventory
+     * @throws RemoteException
+     */
     @Override
-    public LinkedList<String> getInventoryFromUser(ShoutServerInterface serverHandle, ShoutClientInterface user) throws RemoteException {
+    public LinkedList<String> getInventoryFromUser(StubInterface serverHandle, GameInterface user) throws RemoteException {
         return serverHandle.getUserInventory(user.getUserName());
     }
 
     @Override
-    public boolean pick(ShoutServerInterface serverHandle, String object) throws RemoteException {
+    public boolean pick(StubInterface serverHandle, String object) throws RemoteException {
         return serverHandle.pick(object, this.getUserName());
     }
 

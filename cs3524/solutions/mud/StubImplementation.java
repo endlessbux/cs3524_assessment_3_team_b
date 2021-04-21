@@ -1,15 +1,12 @@
-package cs3524.solutions.rmishout;
-
-import cs3524.solutions.mud.MUD;
+package cs3524.solutions.mud;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
 
-public class ShoutServerImplementation implements ShoutServerInterface {
-    // the remote object
+public class StubImplementation implements StubInterface {
+    // the remote MUD game
     private final String edgesfile = "assets/mymud.edg";
     private final String messagesfile = "assets/mymud.msg";
     private final String thingsfile = "assets/mymud.thg";
@@ -19,17 +16,8 @@ public class ShoutServerImplementation implements ShoutServerInterface {
     // hashmap of users inventories - Key: username, Value: things
     private HashMap<String, LinkedList<String>> inventories = new HashMap<>();
 
-    public ShoutServerImplementation() {
+    public StubImplementation() {
         this.mud = new MUD(this.edgesfile, this.messagesfile, this.thingsfile);
-    }
-
-    /**
-     * TODO
-     * @return a list of the available servers to which it is possible to connect
-     */
-    @Override
-    public String[] showServers() throws RemoteException {
-        return null;
     }
 
     /**
