@@ -1,91 +1,124 @@
 package cs3524.solutions.mud;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
 
 public class StubImplementation implements StubInterface {
-    // the remote MUD game
-    private final String edgesfile = "assets/mymud.edg";
-    private final String messagesfile = "assets/mymud.msg";
-    private final String thingsfile = "assets/mymud.thg";
-    private MUD mud;
-    // hashmap of users locations - Key: username, Value: location
-    private HashMap<String,String> locations = new HashMap<>();
-    // hashmap of users inventories - Key: username, Value: things
-    private HashMap<String, LinkedList<String>> inventories = new HashMap<>();
+    // hashmap of open MUD games - Key: game name, Value: MUD game
+    private HashMap<String, MUDGame> games;
+    // hashmap containing connected users per MUD game - Key: username, Value: game name
+    private HashMap<String, String> userNameToMUDGameName;
 
     public StubImplementation() {
-        this.mud = new MUD(this.edgesfile, this.messagesfile, this.thingsfile);
+        this.games = new HashMap<>();
+        this.userNameToMUDGameName = new HashMap<>();
     }
 
     /**
-     * Connects a user to the specified server
      * @param userName
-     * @param serverName
-     * @return true if the user is successfully connected, false otherwise.
+     * @return the MUDGame object to which the user is connected
+     * @throws RemoteException
+     */
+    private MUDGame getGameFromUserName(String userName) throws RemoteException, MUDGameNotFoundException {
+        String gameName = this.userNameToMUDGameName.get(userName);
+        MUDGame game = this.games.get(gameName);
+        if(game == null) {
+            throw new MUDGameNotFoundException();
+        }
+        return game;
+    }
+
+    /**
+     * @return set of game names which can be joined
+     * @throws RemoteException
      */
     @Override
-    public boolean connect(String userName, String serverName) throws RemoteException {
-        // TODO: allow client to join different servers
-        try {
-            this.mud.addThing(mud.startLocation(), userName);
-            this.locations.put(userName, this.mud.startLocation());
-            this.inventories.put(userName, new LinkedList<>());
+    public LinkedList<String> getAvailableGames() throws RemoteException {
+        return new LinkedList<>(this.games.keySet());
+    }
+
+    /**
+     * @param gameName
+     * @return true if the MUD game was created, false otherwise
+     * @throws RemoteException
+     */
+    @Override
+    public boolean createNewGame(String gameName) throws RemoteException {
+        if(!this.getAvailableGames().contains(gameName)) {
+            this.games.put(gameName, new MUDGame());
             return true;
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        } finally {
+        } else {
             return false;
         }
     }
 
     /**
-     * disconnects the user from the game
+     * Connects a user to the specified server
      * @param userName
+     * @param gameName
+     * @return true if the user is successfully connected, false otherwise.
+     * @throws RemoteException
+     */
+    @Override
+    public boolean connect(String userName, String gameName) throws RemoteException {
+        MUDGame game = this.games.get(gameName);
+        if(game != null) {
+            if(game.connect(userName)) {
+                this.userNameToMUDGameName.put(userName, gameName);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Disconnects the user from the game to which it's connected
+     * @param userName
+     * @throws RemoteException
      */
     @Override
     public void disconnect(String userName) throws RemoteException {
-        this.mud.delThing(this.locations.get(userName), userName);
-        this.locations.remove(userName);
-        this.inventories.remove(userName);
+        try {
+            MUDGame game = this.getGameFromUserName(userName);
+            this.userNameToMUDGameName.remove(userName);
+            game.disconnect(userName);
+        } catch (MUDGameNotFoundException e) {}
     }
 
     /**
      * @param userName
      * @return the message to be printed to the user based on its location
+     * @throws RemoteException,MUDGameNotFoundException
      */
     @Override
-    public String getMessage(String userName) throws RemoteException {
-        return this.mud.locationInfo(this.locations.get(userName));
+    public String getMessage(String userName) throws RemoteException, MUDGameNotFoundException {
+        MUDGame game = this.getGameFromUserName(userName);
+        return game.getMessage(userName);
     }
 
     /**
      * @param userName
      * @return an array of directions towards which the user can move
+     * @throws RemoteException,MUDGameNotFoundException
      */
     @Override
-    public String[] getDirections(String userName) throws RemoteException {
-        return this.mud.getDirections(this.locations.get(userName));
+    public String[] getDirections(String userName) throws RemoteException, MUDGameNotFoundException {
+        MUDGame game = this.getGameFromUserName(userName);
+        return game.getDirections(userName);
     }
 
     /**
      * @param userName
      * @return things available at given user's location
-     * @throws RemoteException
+     * @throws RemoteException,MUDGameNotFoundException
      */
     @Override
-    public String[] getPickableThings(String userName) throws RemoteException {
-        Set<String> users = this.locations.keySet();
-        LinkedList<String> pickableThings = new LinkedList<>();
-        String[] things = this.mud.getThingsAtLocation(this.locations.get(userName));
-        for(String thing: things) {
-            if(!users.contains(thing)) {
-                pickableThings.add(thing);
-            }
-        }
-        return pickableThings.toArray(new String[pickableThings.size()]);
+    public String[] getPickableThings(String userName) throws RemoteException, MUDGameNotFoundException {
+        MUDGame game = this.getGameFromUserName(userName);
+        return game.getPickableThings(userName);
     }
 
     /**
@@ -93,21 +126,12 @@ public class StubImplementation implements StubInterface {
      * @param direction the direction towards which the user will be moved
      * @param userName the user to be moved
      * @return true if the user was moved successfully, false otherwise
+     * @throws RemoteException,MUDGameNotFoundException
      */
     @Override
-    public boolean move(String direction, String userName) throws RemoteException {
-        boolean isUserMoved = false;
-        try {
-            String location = this.locations.get(userName);
-            String newLocation = this.mud.moveThing(location, direction, userName);
-            this.locations.replace(userName, newLocation);
-            isUserMoved = this.mud.locationInfo(newLocation).contains(userName);
-        } catch (Exception e) {
-            System.err.println(String.format("The user %s could not be moved.", userName));
-            System.err.println(e.getMessage());
-        } finally {
-            return isUserMoved;
-        }
+    public boolean move(String direction, String userName) throws RemoteException, MUDGameNotFoundException {
+        MUDGame game = this.getGameFromUserName(userName);
+        return game.move(direction, userName);
     }
 
     /**
@@ -115,68 +139,75 @@ public class StubImplementation implements StubInterface {
      * @param thing
      * @param userName
      * @return true if the specified thing was picked, false otherwise
-     * @throws RemoteException
+     * @throws RemoteException,MUDGameNotFoundException
      */
     @Override
-    public boolean pick(String thing, String userName) throws RemoteException {
-        boolean isObjectPicked = false;
-        try {
-            String location = this.locations.get(userName);
-            if(this.mud.isThingAtLocation(thing, location)) {
-                // add thing to user inventory
-                LinkedList<String> userInventory = this.getUserInventory(userName);
-                userInventory.add(thing);
-                // update user inventory
-                this.inventories.replace(userName, userInventory);
-                // remove thing from mud location
-                this.mud.delThing(location, thing);
-                isObjectPicked = true;
-            }
-        } catch (Exception e) {
-            System.err.println(String.format("The thing '%s' could not be picked.", thing));
-            System.err.println(e.getMessage());
-        } finally {
-            return isObjectPicked;
-        }
+    public boolean pick(String thing, String userName) throws RemoteException, MUDGameNotFoundException {
+        MUDGame game = this.getGameFromUserName(userName);
+        return game.pick(thing, userName);
     }
 
     /**
      * @param userName
      * @return inventory of the specified user
-     * @throws RemoteException
+     * @throws RemoteException,MUDGameNotFoundException
      */
     @Override
-    public LinkedList<String> getUserInventory(String userName) throws RemoteException {
-        return (LinkedList<String>)this.inventories.get(userName).clone();
+    public LinkedList<String> getUserInventory(String userName) throws RemoteException, MUDGameNotFoundException {
+        MUDGame game = this.getGameFromUserName(userName);
+        return game.getUserInventory(userName);
     }
 
     /**
      * @param userName
      * @return the location of given user in the MUD
-     * @throws RemoteException
+     * @throws RemoteException,MUDGameNotFoundException
      */
     @Override
-    public String getUserLocation(String userName) throws RemoteException {
-        return this.locations.get(userName);
-    }
-
-    @Override
-    public LinkedList<String> getUsersAtLocation(String inputLocation) throws RemoteException {
-        LinkedList<String> usersAtLocation = new LinkedList<>();
-        this.locations.forEach((userName, userLocation) -> {
-            if(userLocation.equals(inputLocation)) {
-                usersAtLocation.add(userName);
-            }
-        });
-        return usersAtLocation;
+    public String getUserLocation(String userName) throws RemoteException, MUDGameNotFoundException {
+        MUDGame game = this.getGameFromUserName(userName);
+        return game.getUserLocation(userName);
     }
 
     /**
-     * @return an array of player's usernames connected to the MUD
+     * @param userName the username of the user at location which will be checked
+     * @return a list of usernames at the same location as specified user
+     * @throws RemoteException,MUDGameNotFoundException
+     */
+    @Override
+    public LinkedList<String> getNearUsers(String userName) throws RemoteException, MUDGameNotFoundException {
+        MUDGame game = this.getGameFromUserName(userName);
+        return game.getUsersAtLocation(
+                game.getUserLocation(userName)
+        );
+    }
+
+    /**
+     * @param gameName
+     * @return an array of player's usernames connected to the given MUDGame name
      * @throws RemoteException
      */
     @Override
-    public String[] getOnlinePlayers() throws RemoteException {
-        return this.locations.keySet().toArray(new String[0]);
+    public String[] getOnlinePlayersAtGame(String gameName) throws RemoteException {
+        MUDGame game = this.games.get(gameName);
+        if(game != null) {
+            return game.getOnlinePlayers();
+        }
+        return null;
+    }
+
+    public String[] getOnlinePlayers() throws  RemoteException {
+        LinkedList<String> onlinePlayers = new LinkedList<>();
+        this.games.forEach((gameName, game) -> {
+            LinkedList<String> onlinePlayersAtGame = new LinkedList<>(
+                Arrays.asList(
+                        game.getOnlinePlayers()
+                )
+            );
+            onlinePlayersAtGame.forEach((player) -> {
+                onlinePlayers.add(player);
+            });
+        });
+        return onlinePlayers.toArray(new String[0]);
     }
 }
