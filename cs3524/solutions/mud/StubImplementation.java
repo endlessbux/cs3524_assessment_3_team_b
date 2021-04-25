@@ -11,6 +11,7 @@ public class StubImplementation implements StubInterface {
     private HashMap<String, MUDGame> games;
     // hashmap containing connected users per MUD game - Key: username, Value: game name
     private HashMap<String, String> userNameToMUDGameName;
+    private static int maxMudGames = 5;
 
     public StubImplementation() {
         this.games = new HashMap<>();
@@ -210,4 +211,12 @@ public class StubImplementation implements StubInterface {
         });
         return onlinePlayers.toArray(new String[0]);
     }
+
+    //returns the maximum number of Mud games
+
+    public Integer getMudMax () {
+        return maxMudGames;
+    }
+
+
 }

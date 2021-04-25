@@ -45,4 +45,5 @@ public interface StubInterface extends Remote {
     public String[] getOnlinePlayersAtGame(String gameName) throws RemoteException;
 
     public String[] getOnlinePlayers() throws RemoteException;
+
 }

@@ -14,6 +14,9 @@ public class GameImplementation implements GameInterface, Serializable {
     // client application calling methods of the remote object
     private String userName;
     private String gameName;
+    private String gameName2;
+    private String gameName3;
+
 
     public GameImplementation(String userName, String gameName) {
         this.userName = userName;
@@ -62,7 +65,7 @@ public class GameImplementation implements GameInterface, Serializable {
      * @return the chosen/created game name
      * @throws IOException
      */
-    private static String chooseOrCreateGame(StubInterface serverHandle) throws IOException {
+    public static String chooseOrCreateGame(StubInterface serverHandle) throws IOException {
         clearScreen();
         printOpenGames(serverHandle);
         // ask user to either join a game or create one
@@ -144,6 +147,20 @@ public class GameImplementation implements GameInterface, Serializable {
                     serverHandle.disconnect(user.getUserName());
                     gameOver = true;
                     break;
+                case "s":
+                    //switch to another game
+                    clearScreen();
+                    printOpenGames(serverHandle);
+                    // ask user to either join a game or create one
+                    String gameName2 = getUserInput("Insert the game you want to join");
+                    break;
+                case "n":
+                    //create new game
+                    System.out.println("Creating new game...");
+                    String username = user.getUserName();
+                    String gameName3 = getUserInput("Insert the name of the game you want to create");
+                    Thread newgame = new GameThread(username, gameName3);
+                    break;
                 case "":
                     // refresh
                     System.out.println("Refreshing...");
@@ -221,6 +238,11 @@ public class GameImplementation implements GameInterface, Serializable {
                 String gameName = user.getGameName();
                 actionResult = "Online players at " + gameName + ":";
                 actionResult += getPrintablePlayersAtGame(serverHandle, gameName);
+            case "show-user-location":
+                String location = serverHandle.getUserLocation(userName);
+                String game = user.getGameName();
+                actionResult = "You are at " + location + " in "+ game + ".";
+                actionResult += getPrintablePlayersAtGame(serverHandle, game);
         }
         return actionResult;
     }
@@ -365,6 +387,7 @@ public class GameImplementation implements GameInterface, Serializable {
         printableActions += getPrintableThings(serverHandle.getPickableThings(userName));
         printableActions += getPrintableUsers(serverHandle.getNearUsers(userName));
         printableActions += "<show-online-players>";
+        printableActions += "<show-user-location>";
         return printableActions;
     }
 
@@ -442,7 +465,7 @@ public class GameImplementation implements GameInterface, Serializable {
         String userName = user.getUserName();
         String message = serverHandle.getMessage(userName);
         return String.format(
-                "%sMake a move:\n(type 'h' to show available commands or 'q' to quit the game.)",
+                "%sMake a move:\n(type 'h' to show available commands, 'n' for a new game, 's' to switch games, or 'q' to quit the game.)",
                 message
         );
     }
