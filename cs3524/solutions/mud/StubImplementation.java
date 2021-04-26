@@ -1,5 +1,8 @@
 package cs3524.solutions.mud;
 
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,13 +11,14 @@ import java.util.Set;
 
 public class StubImplementation implements StubInterface {
     // hashmap of open MUD games - Key: game name, Value: MUD game
-    private HashMap<String, MUDGame> games;
+    public static HashMap<String, MUDGame> games;
     // hashmap containing connected users per MUD game - Key: username, Value: game name
     private HashMap<String, String> userNameToMUDGameName;
     private static int maxMudGames = 5;
+    public StubInterface serverHandle;
 
     public StubImplementation() {
-        this.games = new HashMap<>();
+        HashMap games = new HashMap<>();
         this.userNameToMUDGameName = new HashMap<>();
     }
 
@@ -23,7 +27,7 @@ public class StubImplementation implements StubInterface {
      * @return the MUDGame object to which the user is connected
      * @throws RemoteException
      */
-    private MUDGame getGameFromUserName(String userName) throws RemoteException, MUDGameNotFoundException {
+    public MUDGame getGameFromUserName(String userName) throws RemoteException, MUDGameNotFoundException {
         String gameName = this.userNameToMUDGameName.get(userName);
         MUDGame game = this.games.get(gameName);
         if(game == null) {
@@ -31,15 +35,15 @@ public class StubImplementation implements StubInterface {
         }
         return game;
     }
-
-    /**
+/*
+    *//**
      * @return set of game names which can be joined
      * @throws RemoteException
-     */
+     *//*
     @Override
     public LinkedList<String> getAvailableGames() throws RemoteException {
         return new LinkedList<>(this.games.keySet());
-    }
+    }*/
 
     /**
      * @param gameName
@@ -48,7 +52,7 @@ public class StubImplementation implements StubInterface {
      */
     @Override
     public boolean createNewGame(String gameName) throws RemoteException {
-        if(!this.getAvailableGames().contains(gameName)) {
+        if(!StubInterface.getAvailableGames().contains(gameName)) {
             this.games.put(gameName, new MUDGame());
             return true;
         } else {
@@ -218,5 +222,10 @@ public class StubImplementation implements StubInterface {
         return maxMudGames;
     }
 
+
+
+    public StubInterface getServerHandle(){
+        return serverHandle;
+    }
 
 }

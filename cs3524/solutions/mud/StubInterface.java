@@ -1,17 +1,36 @@
 package cs3524.solutions.mud;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Set;
+
+
 
 public interface StubInterface extends Remote {
+
     // interface of the remote object to access MUD games
 
-    // show available MUD Games which can be joined
-    public LinkedList<String> getAvailableGames() throws RemoteException;
+    /**
+     * @return set of game names which can be joined
+     * @throws RemoteException
+     */
+    public static LinkedList<String> getAvailableGames() throws RemoteException {
+        return new LinkedList<String>(StubImplementation.games.keySet());
+    }
 
+    public static String getUserInput(String inputMessage) throws IOException {
+        BufferedReader input = new BufferedReader(
+                new InputStreamReader(System.in)
+        );
+        System.out.println(inputMessage);
+        return input.readLine();
+    }
     // create a new MUD Game
     public boolean createNewGame(String gameName) throws RemoteException;
 
@@ -45,5 +64,19 @@ public interface StubInterface extends Remote {
     public String[] getOnlinePlayersAtGame(String gameName) throws RemoteException;
 
     public String[] getOnlinePlayers() throws RemoteException;
+
+    static StubInterface setServerHandle(int port, String hostName) throws MalformedURLException, NotBoundException, RemoteException {
+        // get server handle from RMI registry
+        String registeredURL = String.format("rmi://%s:%d/ShoutService", hostName, port);
+        System.out.println(String.format("Looking up %s", registeredURL));
+        StubInterface serverHandle = (StubInterface) Naming.lookup(registeredURL);
+        return serverHandle;
+    }
+
+
+
+
+    //public String getUserName() throws RemoteException;
+    //public String getGameName() throws RemoteException;
 
 }
