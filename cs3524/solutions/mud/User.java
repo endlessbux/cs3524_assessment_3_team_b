@@ -2,14 +2,13 @@ package cs3524.solutions.mud;
 
 import java.io.*;
 import java.net.*;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.*;
 
 
 public class User implements StubInterface{
-    public String userName;
+    public static String userName;
     public String gameFocus;
     public StubInterface serverHandle;
     private int liveGames = 0;
@@ -96,7 +95,7 @@ public class User implements StubInterface{
      * @return the client's user name
      */
 
-    public String getUserName() {
+    public static String getUserName() {
         return userName;
     }
 

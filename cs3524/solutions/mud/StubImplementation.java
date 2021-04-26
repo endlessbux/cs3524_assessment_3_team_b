@@ -11,14 +11,14 @@ import java.util.Set;
 
 public class StubImplementation implements StubInterface {
     // hashmap of open MUD games - Key: game name, Value: MUD game
-    public static HashMap<String, MUDGame> games;
+    public static HashMap<String, MUDGame> openGames;
     // hashmap containing connected users per MUD game - Key: username, Value: game name
     private HashMap<String, String> userNameToMUDGameName;
     private static int maxMudGames = 5;
     public StubInterface serverHandle;
 
     public StubImplementation() {
-        HashMap games = new HashMap<>();
+        openGames = new HashMap<>();
         this.userNameToMUDGameName = new HashMap<>();
     }
 
@@ -29,7 +29,7 @@ public class StubImplementation implements StubInterface {
      */
     public MUDGame getGameFromUserName(String userName) throws RemoteException, MUDGameNotFoundException {
         String gameName = this.userNameToMUDGameName.get(userName);
-        MUDGame game = this.games.get(gameName);
+        MUDGame game = openGames.get(gameName);
         if(game == null) {
             throw new MUDGameNotFoundException();
         }
@@ -53,7 +53,7 @@ public class StubImplementation implements StubInterface {
     @Override
     public boolean createNewGame(String gameName) throws RemoteException {
         if(!StubInterface.getAvailableGames().contains(gameName)) {
-            this.games.put(gameName, new MUDGame());
+            openGames.put(gameName, new MUDGame());
             return true;
         } else {
             return false;
@@ -69,7 +69,7 @@ public class StubImplementation implements StubInterface {
      */
     @Override
     public boolean connect(String userName, String gameName) throws RemoteException {
-        MUDGame game = this.games.get(gameName);
+        MUDGame game = openGames.get(gameName);
         if(game != null) {
             if(game.connect(userName)) {
                 this.userNameToMUDGameName.put(userName, gameName);
@@ -194,7 +194,7 @@ public class StubImplementation implements StubInterface {
      */
     @Override
     public String[] getOnlinePlayersAtGame(String gameName) throws RemoteException {
-        MUDGame game = this.games.get(gameName);
+        MUDGame game = openGames.get(gameName);
         if(game != null) {
             return game.getOnlinePlayers();
         }
@@ -203,7 +203,7 @@ public class StubImplementation implements StubInterface {
 
     public String[] getOnlinePlayers() throws  RemoteException {
         LinkedList<String> onlinePlayers = new LinkedList<>();
-        this.games.forEach((gameName, game) -> {
+        openGames.forEach((gameName, game) -> {
             LinkedList<String> onlinePlayersAtGame = new LinkedList<>(
                 Arrays.asList(
                         game.getOnlinePlayers()
@@ -215,6 +215,7 @@ public class StubImplementation implements StubInterface {
         });
         return onlinePlayers.toArray(new String[0]);
     }
+
 
     //returns the maximum number of Mud games
 

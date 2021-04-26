@@ -20,11 +20,11 @@ public interface StubInterface extends Remote {
      * @return set of game names which can be joined
      * @throws RemoteException
      */
-    public static LinkedList<String> getAvailableGames() throws RemoteException {
-        return new LinkedList<String>(StubImplementation.games.keySet());
+    static LinkedList<String> getAvailableGames() throws RemoteException {
+        return new LinkedList<String>(StubImplementation.openGames.keySet());
     }
 
-    public static String getUserInput(String inputMessage) throws IOException {
+    static String getUserInput(String inputMessage) throws IOException {
         BufferedReader input = new BufferedReader(
                 new InputStreamReader(System.in)
         );
@@ -64,6 +64,10 @@ public interface StubInterface extends Remote {
     public String[] getOnlinePlayersAtGame(String gameName) throws RemoteException;
 
     public String[] getOnlinePlayers() throws RemoteException;
+
+    static String getUserName() throws RemoteException {
+        return User.userName;
+    }
 
     static StubInterface setServerHandle(int port, String hostName) throws MalformedURLException, NotBoundException, RemoteException {
         // get server handle from RMI registry
