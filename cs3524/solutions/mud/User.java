@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 
-public class User implements UserInterface {
+public class User implements UserInterface, Serializable {
     private final int maxGames = 5;
     private String userName;
     private LinkedList<String> gamePool;

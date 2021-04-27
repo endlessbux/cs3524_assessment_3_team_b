@@ -14,3 +14,5 @@ mud:
 	javac cs3524/solutions/mud/ServerMainline.java
 	javac cs3524/solutions/mud/StubImplementation.java
 	javac cs3524/solutions/mud/MUDGame.java
+	javac cs3524/solutions/mud/StubInterface.java
+	javac cs3524/solutions/mud/User.java

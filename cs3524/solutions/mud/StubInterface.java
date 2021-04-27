@@ -28,31 +28,31 @@ public interface StubInterface extends Remote {
     public boolean createNewGame(String gameName) throws RemoteException;
 
     // connect client to given MUD game
-    public boolean connect(String userName, String gameName) throws RemoteException;
+    public boolean connect(User gameUser, String gameName) throws RemoteException;
 
     // disconnect client from currently connected server
-    public void disconnect(String userName) throws RemoteException, MUDGameNotFoundException;
+    public void disconnect(User gameUser) throws RemoteException, MUDGameNotFoundException;
 
     // get user message
-    public String getMessage(String userName) throws RemoteException, MUDGameNotFoundException;
+    public String getMessage(User gameUser) throws RemoteException, MUDGameNotFoundException;
 
     // get user available directions
-    public String[] getDirections(String userName) throws RemoteException, MUDGameNotFoundException;
+    public String[] getDirections(User gameUser) throws RemoteException, MUDGameNotFoundException;
 
     // get a list of things that can be picked
-    public String[] getPickableThings(String userName) throws RemoteException, MUDGameNotFoundException;
+    public String[] getPickableThings(User gameUser) throws RemoteException, MUDGameNotFoundException;
 
     // move the user towards a given direction
-    public boolean move(String direction, String userName) throws RemoteException, MUDGameNotFoundException;
+    public boolean move(String direction, User gameUser) throws RemoteException, MUDGameNotFoundException;
 
     // user picks an object at location
-    public boolean pick(String object, String userName) throws RemoteException, MUDGameNotFoundException;
+    public boolean pick(String object, User gameUser) throws RemoteException, MUDGameNotFoundException;
 
-    public LinkedList<String> getUserInventory(String userName) throws RemoteException, MUDGameNotFoundException;
+    public LinkedList<String> getUserInventory(User gameUser) throws RemoteException, MUDGameNotFoundException;
 
-    public String getUserLocation(String userName) throws RemoteException, MUDGameNotFoundException;
+    public String getUserLocation(User gameUser) throws RemoteException, MUDGameNotFoundException;
 
-    public LinkedList<String> getNearUsers(String userName) throws RemoteException, MUDGameNotFoundException;
+    public LinkedList<String> getNearUsers(User gameUser) throws RemoteException, MUDGameNotFoundException;
 
     public String[] getOnlinePlayersAtGame(String gameName) throws RemoteException;
 
