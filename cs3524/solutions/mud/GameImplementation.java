@@ -1,38 +1,36 @@
 package cs3524.solutions.mud;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 
 public class GameImplementation implements Serializable {
     // client application calling methods of the remote object
-    static User gameUser; // = new User();
-    private static String userName;
-    public String gameFocus; // = gameUser.gameFocus;
-    //public String userName; //= gameUser.userName;
-    public static StubInterface serverHandle; // = gameUser.serverHandle;
-    //public StubInterface serverHandle = StubInterface getServerHandle();
-
-
-    public GameImplementation(User gameUser, String gameFocus, StubInterface serverHandle, String userName) {
-        this.gameFocus = gameFocus;
-        this.serverHandle = serverHandle;
-        this.userName = userName;
-        this.gameUser = gameUser;
-    }
 
     public static void main(String args[]) throws RemoteException {
+        // retrieve user input
+        if(args.length < 2) {
+            System.err.println("Usage:\njava GameImplementation <hostname> <port>");
+            return;
+        }
+        String hostName = args[0];
+        int port = Integer.parseInt(args[1]);
 
+        setSecurityPolicy("rmishout.policy");
         try {
+            StubInterface serverHandle = StubInterface.initServerHandle(port, hostName);
+            String userName = getUserInput("Insert your username:");
+            String gameName = chooseOrCreateGame(serverHandle);
+            User gameUser = new User(userName, gameName);
             do {
-                gameUser = new User();
-                serverHandle = gameUser.serverHandle;
-                String gameName = chooseOrCreateGame(serverHandle);
                 GameImplementation userGame = joinServer(serverHandle, gameName);
                 runGame(serverHandle, userGame, gameName);
-            } while(StubInterface.getUserInput("Do you want to join another game?\nInsert any key to exit, or [y] to join another game.").equals("y"));
+            } while(getUserInput("Do you want to join another game?\nInsert any key to exit, or [y] to join another game.").equals("y"));
         } catch (MalformedURLException e) {
             System.err.println("The provided URL is not valid.");
             System.err.println(e.getMessage());
@@ -42,6 +40,9 @@ public class GameImplementation implements Serializable {
             System.err.println(e.getMessage());
         } catch (MUDGameNotFoundException e) {
             System.err.println("Your request could not be processed because the MUD is offline.\nJoin a different MUD.");
+        } catch (NotBoundException e) {
+            System.err.println("Something has gone wrong...");
+            System.err.println(e.getMessage());
         }
 
         System.out.println("GAME OVER.");
@@ -57,7 +58,7 @@ public class GameImplementation implements Serializable {
         clearScreen();
         printOpenGames(serverHandle);
         // ask user to either join a game or create one
-        String gameName = StubInterface.getUserInput("Insert the game you want to join, or insert a new name to create a MUD game");
+        String gameName = getUserInput("Insert the game you want to join, or insert a new name to create a MUD game");
         if(!StubInterface.getAvailableGames().contains(gameName)) {
             // if inserted game name doesn't exist create one
             System.out.println(
@@ -98,6 +99,14 @@ public class GameImplementation implements Serializable {
         }
     }
 
+    static String getUserInput(String inputMessage) throws IOException {
+        BufferedReader input = new BufferedReader(
+                new InputStreamReader(System.in)
+        );
+        System.out.println(inputMessage);
+        return input.readLine();
+    }
+
     /**
      * Method to print players that joined a given game
      * @param serverHandle
@@ -119,20 +128,20 @@ public class GameImplementation implements Serializable {
      * @throws IOException
      * @throws MUDGameNotFoundException
      */
-    private static void runGame(StubInterface serverHandle, GameImplementation userGame, String gameName) throws IOException, MUDGameNotFoundException {
+    private static void runGame(StubInterface serverHandle, User userGame, String gameName) throws IOException, MUDGameNotFoundException {
         System.out.println("Game started!");
         String chooseSomething;
         boolean gameOver = false;
         while(!gameOver) {
             chooseSomething = getUserGameOutput(serverHandle, userGame);
-            String choice = StubInterface.getUserInput(chooseSomething);
+            String choice = getUserInput(chooseSomething);
             clearScreen();
 
             switch(choice) {
                 case "q":
                     // quit game
                     System.out.println("Quitting game...");
-                    serverHandle.disconnect(User.getUserName());
+                    serverHandle.disconnect(userGame.getUserName());
                     gameOver = true;
                     break;
                 case "s":
@@ -140,13 +149,13 @@ public class GameImplementation implements Serializable {
                     clearScreen();
                     printOpenGames(serverHandle);
                     // ask user to either join a game or create one
-                    String gameName2 = StubInterface.getUserInput("Insert the game you want to join");
+                    String gameName2 = getUserInput("Insert the game you want to join");
                     break;
                 case "n":
                     //create new game
                     System.out.println("Creating new game...");
                     String username = userGame.getUserName();
-                    String gameName3 = StubInterface.getUserInput("Insert the name of the game you want to create");
+                    String gameName3 = getUserInput("Insert the name of the game you want to create");
                     //Thread newgame = new GameThread(username, gameName3);
                     break;
                 case "":
@@ -202,7 +211,7 @@ public class GameImplementation implements Serializable {
      * @return the result message of the user action
      * @throws RemoteException,MUDGameNotFoundException
      */
-    private static String doAction(GameImplementation userGame, StubInterface serverHandle, String choice) throws RemoteException, MUDGameNotFoundException {
+    private static String doAction(User userGame, StubInterface serverHandle, String choice) throws RemoteException, MUDGameNotFoundException {
         String actionResult = String.format("Internal error:\nCould not perform '%s'. Try again.", choice);
         String[] action = getAction(choice);
         String userName = userGame.getUserName();
@@ -223,12 +232,12 @@ public class GameImplementation implements Serializable {
                 actionResult = String.format("%s's inventory:\n", action[1]);
                 actionResult += getPrintableInventory(inputUserInventory);
             case "show-online-players":
-                String gameName = userGame.getGameName();
+                String gameName = userGame.getGameFocus();
                 actionResult = "Online players at " + gameName + ":";
                 actionResult += getPrintablePlayersAtGame(serverHandle, gameName);
             case "show-user-location":
                 String location = serverHandle.getUserLocation(userName);
-                String game = userGame.getGameName();
+                String game = userGame.getGameFocus();
                 actionResult = "You are at " + location + " in "+ game + ".";
                 actionResult += getPrintablePlayersAtGame(serverHandle, game);
         }
@@ -244,7 +253,7 @@ public class GameImplementation implements Serializable {
      * @throws RemoteException
      * @throws MUDGameNotFoundException
      */
-    private static boolean isActionAvailable(GameImplementation userGame, StubInterface serverHandle, String choice) throws RemoteException, MUDGameNotFoundException {
+    private static boolean isActionAvailable(User userGame, StubInterface serverHandle, String choice) throws RemoteException, MUDGameNotFoundException {
         boolean isActionAvailable = false;
         String[] action = getAction(choice);
         switch (action[0]) {
@@ -274,7 +283,7 @@ public class GameImplementation implements Serializable {
      * @throws RemoteException
      * @throws MUDGameNotFoundException
      */
-    private static boolean isThingAvailable(GameImplementation userGame, StubInterface serverHandle, String toTestInput) throws RemoteException, MUDGameNotFoundException {
+    private static boolean isThingAvailable(User userGame, StubInterface serverHandle, String toTestInput) throws RemoteException, MUDGameNotFoundException {
         boolean isPickable = false;
         String userName = userGame.getUserName();
         String[] pickableThings = serverHandle.getPickableThings(userName);
@@ -296,7 +305,7 @@ public class GameImplementation implements Serializable {
      * @throws RemoteException
      * @throws MUDGameNotFoundException
      */
-    private static boolean isDirectionAvailable(GameImplementation userGame, StubInterface serverHandle, String toTestInput) throws RemoteException, MUDGameNotFoundException {
+    private static boolean isDirectionAvailable(User userGame, StubInterface serverHandle, String toTestInput) throws RemoteException, MUDGameNotFoundException {
         boolean isAvailable = false;
         String[] availableDirections = serverHandle.getDirections(userGame.getUserName());
         for(String direction: availableDirections) {
@@ -367,9 +376,9 @@ public class GameImplementation implements Serializable {
      * @throws RemoteException
      * @throws MUDGameNotFoundException
      */
-    private static String getPrintableActions(StubInterface serverHandle, GameImplementation userGame) throws RemoteException, MUDGameNotFoundException {
+    private static String getPrintableActions(StubInterface serverHandle, User userGame) throws RemoteException, MUDGameNotFoundException {
         String printableActions = "";
-        String userName = getUserName();
+        String userName = userGame.getUserName();
         String location = serverHandle.getUserLocation(userName);
         printableActions += getPrintableDirections(serverHandle.getDirections(userName));
         printableActions += getPrintableThings(serverHandle.getPickableThings(userName));
@@ -401,24 +410,24 @@ public class GameImplementation implements Serializable {
     private static GameImplementation joinServer(StubInterface serverHandle, String gameName) throws IOException {
         // create user instance
         System.out.println("Logging in...");
-        String userName = StubInterface.getUserInput("Insert username:");
+        String userName = getUserInput("Insert username:");
         GameImplementation userGame = new GameImplementation(gameUser, gameName, serverHandle, userName);
         serverHandle.connect(
-                userGame.getUserName(),
-                gameName
+            userGame.getUserName(),
+            gameName
         );
         System.out.println(
-                String.format(
-                        "Logged in as '%s'.",
-                        userName
-                )
+            String.format(
+                    "Logged in as '%s'.",
+                    userName
+            )
         );
         String onlinePlayers = getPrintablePlayersAtGame(serverHandle, gameName);
         System.out.println(
-                String.format(
-                        "Online players:%s",
-                        onlinePlayers
-                )
+            String.format(
+                    "Online players:%s",
+                    onlinePlayers
+            )
         );
         return userGame;
     }
@@ -449,42 +458,13 @@ public class GameImplementation implements Serializable {
      * @throws RemoteException
      * @throws MUDGameNotFoundException
      */
-    private static String getUserGameOutput(StubInterface serverHandle, GameImplementation userGame) throws RemoteException, MUDGameNotFoundException {
-        String userName = User.getUserName();
+    private static String getUserGameOutput(StubInterface serverHandle, User userGame) throws RemoteException, MUDGameNotFoundException {
+        String userName = userGame.getUserName();
         String message = serverHandle.getMessage(userName);
         return String.format(
                 "%sMake a move:\n(type 'h' to show available commands, 'n' for a new game, 's' to switch games, or 'q' to quit the game.)",
                 message
         );
-    }
-
-/*    *//**
-     * Method to get user input String from CLI
-     * @return String input by the user
-     * @throws IOException
-     *//*
-    private static String getUserInput(String inputMessage) throws IOException {
-        BufferedReader input = new BufferedReader(
-                new InputStreamReader(System.in)
-        );
-        System.out.println(inputMessage);
-        return input.readLine();
-    }*/
-
-    /**
-     * @return the client's user name
-     */
-
-    public static String getUserName() {
-        return userName;
-    }
-
-    /**
-     * @return the game the client is currently connected to
-     */
-
-    public String getGameName() {
-        return gameFocus;
     }
 
     /**
@@ -496,7 +476,7 @@ public class GameImplementation implements Serializable {
      */
 
     public LinkedList<String> getInventoryFromUser(StubInterface serverHandle, UserInterface user) throws RemoteException, MUDGameNotFoundException {
-        return serverHandle.getUserInventory(getUserName());
+        return serverHandle.getUserInventory(user.getUserName());
     }
 
     /**

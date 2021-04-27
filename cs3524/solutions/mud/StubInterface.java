@@ -24,13 +24,6 @@ public interface StubInterface extends Remote {
         return new LinkedList<String>(StubImplementation.openGames.keySet());
     }
 
-    static String getUserInput(String inputMessage) throws IOException {
-        BufferedReader input = new BufferedReader(
-                new InputStreamReader(System.in)
-        );
-        System.out.println(inputMessage);
-        return input.readLine();
-    }
     // create a new MUD Game
     public boolean createNewGame(String gameName) throws RemoteException;
 
@@ -65,11 +58,7 @@ public interface StubInterface extends Remote {
 
     public String[] getOnlinePlayers() throws RemoteException;
 
-    static String getUserName() throws RemoteException {
-        return User.userName;
-    }
-
-    static StubInterface setServerHandle(int port, String hostName) throws MalformedURLException, NotBoundException, RemoteException {
+    static StubInterface initServerHandle(int port, String hostName) throws MalformedURLException, NotBoundException, RemoteException {
         // get server handle from RMI registry
         String registeredURL = String.format("rmi://%s:%d/ShoutService", hostName, port);
         System.out.println(String.format("Looking up %s", registeredURL));

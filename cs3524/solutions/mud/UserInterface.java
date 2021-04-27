@@ -5,11 +5,12 @@ import java.rmi.RemoteException;
 import java.util.LinkedList;
 
 public interface UserInterface extends Remote {
-    // the interface to the client's application
+    // the interface to the local user data
 
-
-    //public String getUserInput() throws IOException;
-    //public String getServerHandle() throws RemoteException;
-    //public LinkedList<String> getInventoryFromUser(StubInterface serverHandle, UserInterface user) throws RemoteException, MUDGameNotFoundException;
-    //public boolean pick(StubInterface serverHandle, String object) throws RemoteException, MUDGameNotFoundException;
+    public boolean addGameToPool(String gameName);
+    public boolean switchGameFocus(String gameName);
+    public void quitGame();
+    public void quitAllGames();
+    public String getUserName();
+    public String getGameFocus();
 }
