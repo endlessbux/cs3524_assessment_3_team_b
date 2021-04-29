@@ -57,9 +57,10 @@ public class GameImplementation implements Serializable {
     public static String chooseOrCreateGame(StubInterface serverHandle) throws IOException {
         clearScreen();
         printOpenGames(serverHandle);
+        LinkedList currentGames = serverHandle.getAvailableGames();
         // ask user to either join a game or create one
         String gameName = getUserInput("Insert the game you want to join, or insert a new name to create a MUD game");
-        if(!StubInterface.getAvailableGames().contains(gameName)) {
+        if(!currentGames.contains(gameName)) {
             // if inserted game name doesn't exist create one
             System.out.println(
                     String.format(
@@ -87,7 +88,7 @@ public class GameImplementation implements Serializable {
     private static void printOpenGames(StubInterface serverHandle) throws RemoteException {
         System.out.println("Open games:");
         // show open games on server
-        LinkedList<String> availableGames = StubInterface.getAvailableGames();
+        LinkedList<String> availableGames = serverHandle.getAvailableGames();
 
         if(availableGames.size() < 1) {
             System.out.println("[There are no online games currently]");

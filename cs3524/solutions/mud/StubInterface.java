@@ -16,13 +16,9 @@ public interface StubInterface extends Remote {
 
     // interface of the remote object to access MUD games
 
-    /**
-     * @return set of game names which can be joined
-     * @throws RemoteException
-     */
-    static LinkedList<String> getAvailableGames() throws RemoteException {
-        return new LinkedList<String>(StubImplementation.openGames.keySet());
-    }
+
+
+
 
     // create a new MUD Game
     public boolean createNewGame(String gameName) throws RemoteException;
@@ -65,6 +61,8 @@ public interface StubInterface extends Remote {
         StubInterface serverHandle = (StubInterface) Naming.lookup(registeredURL);
         return serverHandle;
     }
+
+    public LinkedList<String> getAvailableGames() throws RemoteException;
 
 
 

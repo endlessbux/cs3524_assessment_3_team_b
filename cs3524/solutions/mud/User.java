@@ -1,9 +1,6 @@
 package cs3524.solutions.mud;
 
 import java.io.*;
-import java.net.*;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.*;
 
 
@@ -45,6 +42,13 @@ public class User implements UserInterface, Serializable {
         return false;
     }
 
+    public boolean isGameinPool(String gameName) {
+        if(this.gamePool.contains(gameName)) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void quitGame() {
         this.gamePool.remove(this.gameFocus);
@@ -61,6 +65,10 @@ public class User implements UserInterface, Serializable {
     @Override
     public String getUserName() {
         return this.userName;
+    }
+
+    public LinkedList<String> getUserGamePool() {
+        return this.gamePool;
     }
 
     @Override
