@@ -149,7 +149,7 @@ public class GameImplementation implements Serializable {
                     clearScreen();
                     printOpenGames(serverHandle);
                     // ask user to either join a game or create one
-                    String gameName2 = getUserInput("Insert the name of the game you want to create");
+                    String gameName2 = getUserInput("Insert the name of the game you want to join");
                     serverHandle.connect(gameUser, gameName2);
                     break;
                 case "n":
@@ -157,6 +157,7 @@ public class GameImplementation implements Serializable {
                     System.out.println("Creating new game...");
                     String gameName3 = getUserInput("Insert the name of the game you want to create");
                     serverHandle.createNewGame(gameName3);
+                    serverHandle.connect(gameUser, gameName3);
                     gameUser.addGameToPool(gameName3);
                     gameUser.switchGameFocus(gameName3);
                     break;
