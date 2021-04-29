@@ -149,12 +149,16 @@ public class GameImplementation implements Serializable {
                     clearScreen();
                     printOpenGames(serverHandle);
                     // ask user to either join a game or create one
-                    String gameName2 = getUserInput("Insert the game you want to join");
+                    String gameName2 = getUserInput("Insert the name of the game you want to create");
+                    serverHandle.connect(gameUser, gameName2);
                     break;
                 case "n":
                     //create new game
                     System.out.println("Creating new game...");
                     String gameName3 = getUserInput("Insert the name of the game you want to create");
+                    serverHandle.createNewGame(gameName3);
+                    gameUser.addGameToPool(gameName3);
+                    gameUser.switchGameFocus(gameName3);
                     break;
                 case "":
                     // refresh
