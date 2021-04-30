@@ -3,7 +3,6 @@ package cs3524.solutions.mud;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public class StubImplementation implements StubInterface {
@@ -11,12 +10,11 @@ public class StubImplementation implements StubInterface {
     private HashMap<String, MUDGame> openGames;
     // hashmap containing connected users per MUD game - Key: username, Value: game name
     //private HashMap<String, String> userNameToMUDGameName;
-    private static int maxMudGames = 5;
+    private static int maxMudGames = 8;
     public StubInterface serverHandle;
 
     public StubImplementation() {
         this.openGames = new HashMap<>();
-        //this.userNameToMUDGameName = new HashMap<>();
     }
 
     /**
@@ -31,17 +29,10 @@ public class StubImplementation implements StubInterface {
         }
         return gameNames;
     }
-/*
-    *//**
-     * @return set of game names which can be joined
-     * @throws RemoteException
-     *//*
-    @Override
-    public LinkedList<String> getAvailableGames() throws RemoteException {
-        return new LinkedList<>(this.games.keySet());
-    }*/
+
 
     /**
+     * Checks if max mud games has been reached and checks to see if game already exists before creating game
      * @param gameName
      * @return true if the MUD game was created, false otherwise
      * @throws RemoteException
@@ -50,12 +41,16 @@ public class StubImplementation implements StubInterface {
     public boolean createNewGame(String gameName) throws RemoteException {
         StubImplementation stubImp = new StubImplementation();
         LinkedList<String> currentGames = stubImp.getAvailableGames();
-        if(!currentGames.contains(gameName)) {
-            openGames.put(gameName, new MUDGame());
-            return true;
-        } else {
-            return false;
+        if (currentGames.size() < maxMudGames) {
+            if(!currentGames.contains(gameName)) {
+                openGames.put(gameName, new MUDGame());
+                return true;
+            } else {
+                return false;
+            }
         }
+        else {System.out.println("Limit of Mud Games has been reached.");
+            return false; }
     }
 
     /**
