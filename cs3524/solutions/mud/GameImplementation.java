@@ -30,7 +30,7 @@ public class GameImplementation implements Serializable {
             do {
                 GameImplementation userGame = joinServer(serverHandle, gameUser, gameName);
                 runGame(serverHandle, gameUser);
-            } while(getUserInput("Do you want to join another game?\nInsert any key to exit, or [y] to join another game.").equals("y"));
+            } while(getUserInput("Do you want to join another game?\nInsert any key to exit or [g] to play again.").equals("g"));///
         } catch (MalformedURLException e) {
             System.err.println("The provided URL is not valid.");
             System.err.println(e.getMessage());
@@ -141,6 +141,7 @@ public class GameImplementation implements Serializable {
                 case "q":
                     // quit game
                     System.out.println("Quitting game...");
+                    gameUser.quitAllGames();
                     serverHandle.disconnect(gameUser);
                     gameOver = true;
                     break;
@@ -154,13 +155,32 @@ public class GameImplementation implements Serializable {
                     break;
                 case "n":
                     //create new game
-                    System.out.println("Creating new game...");
                     String gameName3 = getUserInput("Insert the name of the game you want to create");
                     serverHandle.createNewGame(gameName3);
                     serverHandle.connect(gameUser, gameName3);
                     gameUser.addGameToPool(gameName3);
                     gameUser.switchGameFocus(gameName3);
+                    System.out.println("Creating new game...");
                     break;
+                case "g":
+                    //play after quitting
+                    clearScreen();
+                    gameUser.quitGame();
+                    printOpenGames(serverHandle);
+                    // ask user to either join a game or create one
+                    String gameName4 = getUserInput("Insert the name of the game you want to join or enter a new game");
+                    LinkedList<String> availableGames = serverHandle.getAvailableGames();
+                    if(availableGames.contains(gameName4)){
+                        serverHandle.connect(gameUser, gameName4);
+                        System.out.println("Entering game...");
+                    }
+                    else{
+                        serverHandle.createNewGame(gameName4);
+                        serverHandle.connect(gameUser, gameName4);
+                        gameUser.addGameToPool(gameName4);
+                        gameUser.switchGameFocus(gameName4);
+                        System.out.println("Creating new game...");
+                    }
                 case "":
                     // refresh
                     System.out.println("Refreshing...");
@@ -391,18 +411,7 @@ public class GameImplementation implements Serializable {
         return printableActions;
     }
 
-  /*  *//**
-     * Method to get server handle from RMI registry
-     * @param port
-     * @param hostName
-     * @return the server handle
-     *//*
-    private static StubInterface getServerHandle(int port, String hostName) throws MalformedURLException, NotBoundException, RemoteException {
-        // get server handle from RMI registry
-        String registeredURL = String.format("rmi://%s:%d/ShoutService", hostName, port);
-        System.out.println(String.format("Looking up %s", registeredURL));
-        return (StubInterface) Naming.lookup(registeredURL);
-    }*/
+
 
     /**
      * Procedure to make the client join the MUD game
@@ -413,7 +422,7 @@ public class GameImplementation implements Serializable {
     private static GameImplementation joinServer(StubInterface serverHandle, User gameUser, String gameName) throws IOException {
         // create user instance
         System.out.println("Logging in...");
-        String userName = getUserInput("Insert username:");
+        String userName = gameUser.getUserName();
         GameImplementation userGame = new GameImplementation();
         serverHandle.connect(
             gameUser,

@@ -96,7 +96,6 @@ public class StubImplementation implements StubInterface {
             MUDGame gameQuit = openGames.get(i);
             gameQuit.disconnect(gameUser.getUserName());
         }
-        gameUser.quitAllGames();
     }
 
         /**
