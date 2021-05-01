@@ -9,6 +9,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 
+
+
 public class GameImplementation implements Serializable {
     // client application calling methods of the remote object
 
@@ -43,8 +45,10 @@ public class GameImplementation implements Serializable {
         } catch (NotBoundException e) {
             System.err.println("Something has gone wrong...");
             System.err.println(e.getMessage());
+        } catch(IndexOutOfBoundsException e){
+            System.err.println("This old mistake");
+            System.err.println(e.getMessage());
         }
-
         System.out.println("GAME OVER.");
     }
 
@@ -141,7 +145,6 @@ public class GameImplementation implements Serializable {
                 case "q":
                     // quit game
                     System.out.println("Quitting game...");
-                    gameUser.quitAllGames();
                     serverHandle.disconnect(gameUser);
                     gameOver = true;
                     break;
@@ -150,7 +153,7 @@ public class GameImplementation implements Serializable {
                     clearScreen();
                     printOpenGames(serverHandle);
                     // ask user to either join a game or create one
-                    String gameName2 = getUserInput("Insert the name of the game you want to join");
+                    String gameName2 = getUserInput("INSERT the name of the game you want to join");
                     serverHandle.connect(gameUser, gameName2);
                     break;
                 case "n":
@@ -162,25 +165,6 @@ public class GameImplementation implements Serializable {
                     gameUser.switchGameFocus(gameName3);
                     System.out.println("Creating new game...");
                     break;
-                case "g":
-                    //play after quitting
-                    clearScreen();
-                    gameUser.quitGame();
-                    printOpenGames(serverHandle);
-                    // ask user to either join a game or create one
-                    String gameName4 = getUserInput("Insert the name of the game you want to join or enter a new game");
-                    LinkedList<String> availableGames = serverHandle.getAvailableGames();
-                    if(availableGames.contains(gameName4)){
-                        serverHandle.connect(gameUser, gameName4);
-                        System.out.println("Entering game...");
-                    }
-                    else{
-                        serverHandle.createNewGame(gameName4);
-                        serverHandle.connect(gameUser, gameName4);
-                        gameUser.addGameToPool(gameName4);
-                        gameUser.switchGameFocus(gameName4);
-                        System.out.println("Creating new game...");
-                    }
                 case "":
                     // refresh
                     System.out.println("Refreshing...");
@@ -265,6 +249,10 @@ public class GameImplementation implements Serializable {
                 actionResult += getPrintablePlayersAtGame(serverHandle, game);
         }
         return actionResult;
+    }
+
+    private static void clearUser(User gameUser){
+        gameUser.quitAllGames();
     }
 
     /**

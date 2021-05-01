@@ -148,6 +148,13 @@ public class MUDGame {
         return (LinkedList<String>)this.inventories.get(userName).clone();
     }
 
+/*
+    public void clearUserInventory(String userName) {
+        LinkedList<String> inventory = this.inventories.get(userName);
+        inventory.clear();
+    }
+*/
+
     /**
      * @param userName
      * @return the location of given user in the MUD

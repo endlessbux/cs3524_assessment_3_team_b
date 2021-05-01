@@ -85,12 +85,12 @@ public class StubImplementation implements StubInterface {
      */
     @Override
     public void disconnect(User gameUser) throws RemoteException, MUDGameNotFoundException {
-        LinkedList Games = StubImplementation.getGamesFromUserName(gameUser);
-        for (int i = 0; i < Games.size(); i++) {
-            Games.get(i);
-            MUDGame gameQuit = openGames.get(i);
-            gameQuit.disconnect(gameUser.getUserName());
-        }
+        String game = gameUser.getGameFocus();
+        MUDGame mudGame = openGames.get(game);
+        mudGame.disconnect(gameUser.getUserName());
+        //mudGame.clearUserInventory(gameUser.getUserName());
+        //gameUser.quitAllGames();
+
     }
 
         /**
