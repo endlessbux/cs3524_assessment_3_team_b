@@ -186,4 +186,8 @@ public class MUDGame {
     public String[] getOnlinePlayers() {
         return this.locations.keySet().toArray(new String[0]);
     }
+
+    public boolean isUserConnected(String userName) {
+        return this.locations.keySet().contains(userName);
+    }
 }

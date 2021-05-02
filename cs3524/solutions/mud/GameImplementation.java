@@ -154,7 +154,7 @@ public class GameImplementation implements Serializable {
                     printOpenGames(serverHandle);
                     // ask user to either join a game or create one
                     String gameName2 = getUserInput("INSERT the name of the game you want to join");
-                    serverHandle.connect(gameUser, gameName2);
+                    gameUser.switchGameFocus(gameName2);
                     break;
                 case "n":
                     //create new game
@@ -238,15 +238,18 @@ public class GameImplementation implements Serializable {
                 LinkedList<String> inputUserInventory = serverHandle.getUserInventory(gameUser);
                 actionResult = String.format("%s's inventory:\n", action[1]);
                 actionResult += getPrintableInventory(inputUserInventory);
+                break;
             case "show-online-players":
                 String gameName = gameUser.getGameFocus();
                 actionResult = "Online players at " + gameName + ":";
                 actionResult += getPrintablePlayersAtGame(serverHandle, gameName);
+                break;
             case "show-user-location":
                 String location = serverHandle.getUserLocation(gameUser);
                 String game = gameUser.getGameFocus();
                 actionResult = "You are at " + location + " in "+ game + ".";
                 actionResult += getPrintablePlayersAtGame(serverHandle, game);
+                break;
         }
         return actionResult;
     }
@@ -305,8 +308,6 @@ public class GameImplementation implements Serializable {
         }
         return isPickable;
     }
-
-
 
     /**
      * @param gameUser
@@ -394,7 +395,7 @@ public class GameImplementation implements Serializable {
         printableActions += getPrintableDirections(serverHandle.getDirections(gameUser));
         printableActions += getPrintableThings(serverHandle.getPickableThings(gameUser));
         printableActions += getPrintableUsers(serverHandle.getNearUsers(gameUser));
-        printableActions += "<show-online-players>";
+        printableActions += "<show-online-players>\n";
         printableActions += "<show-user-location>";
         return printableActions;
     }

@@ -40,16 +40,13 @@ public class StubImplementation implements StubInterface {
     public boolean createNewGame(String gameName) throws RemoteException {
         StubImplementation stubImp = new StubImplementation();
         LinkedList<String> currentGames = stubImp.getAvailableGames();
-        if (currentGames.size() < maxMudGames) {
+        if (currentGames.size() < this.maxMudGames) {
             if(!currentGames.contains(gameName)) {
-                openGames.put(gameName, new MUDGame());
+                this.openGames.put(gameName, new MUDGame());
                 return true;
-            } else {
-                return false;
             }
         }
-        else {System.out.println("Limit of Mud Games has been reached.");
-            return false; }
+        return false;
     }
 
     /**
@@ -62,14 +59,9 @@ public class StubImplementation implements StubInterface {
     @Override
     public boolean connect(User gameUser, String gameName) throws RemoteException {
         MUDGame game = this.openGames.get(gameName);
+        String userName = gameUser.getUserName();
         if(game != null) {
-            if(game.connect(gameUser.getUserName())) {
-                if(!gameUser.isGameInPool(gameName)) {
-                    gameUser.addGameToPool(gameName);
-                }
-                gameUser.switchGameFocus(gameName);
-            }
-            return true;
+            return game.connect(userName);
         }
         return false;
     }
