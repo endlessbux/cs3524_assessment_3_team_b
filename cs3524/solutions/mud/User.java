@@ -36,13 +36,13 @@ public class User implements UserInterface, Serializable {
     @Override
     public boolean switchGameFocus(String gameName) {
         if(this.gamePool.contains(gameName)) {
-            int gamePosition = this.gamePool.indexOf(gameName);
-            this.gameFocus = gamePosition;
+            this.gameFocus = this.gamePool.indexOf(gameName);
+            return true;
         }
         return false;
     }
 
-    public boolean isGameinPool(String gameName) {
+    public boolean isGameInPool(String gameName) {
         if(this.gamePool.contains(gameName)) {
             return true;
         }

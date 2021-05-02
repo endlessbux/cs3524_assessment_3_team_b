@@ -11,7 +11,6 @@ public class StubImplementation implements StubInterface {
     // hashmap containing connected users per MUD game - Key: username, Value: game name
     //private HashMap<String, String> userNameToMUDGameName;
     private static int maxMudGames = 8;
-    public StubInterface serverHandle;
 
     public StubImplementation() {
         this.openGames = new HashMap<>();
@@ -62,35 +61,31 @@ public class StubImplementation implements StubInterface {
      */
     @Override
     public boolean connect(User gameUser, String gameName) throws RemoteException {
-        MUDGame game = openGames.get(gameName);
+        MUDGame game = this.openGames.get(gameName);
         if(game != null) {
             if(game.connect(gameUser.getUserName())) {
-                if (!gameUser.isGameinPool(gameName)) {
+                if(!gameUser.isGameInPool(gameName)) {
                     gameUser.addGameToPool(gameName);
-                    gameUser.switchGameFocus(gameName);
-                } else {
-                    gameUser.switchGameFocus(gameName);
                 }
+                gameUser.switchGameFocus(gameName);
             }
             return true;
-
         }
         return false;
     }
 
     /**
-     * Disconnects the user from the game to which it's connected
+     * Disconnects the user from all the games it's connected to
      * @param gameUser
      * @throws RemoteException
      */
     @Override
     public void disconnect(User gameUser) throws RemoteException, MUDGameNotFoundException {
-        String game = gameUser.getGameFocus();
-        MUDGame mudGame = openGames.get(game);
-        mudGame.disconnect(gameUser.getUserName());
-        //mudGame.clearUserInventory(gameUser.getUserName());
-        //gameUser.quitAllGames();
-
+        // disconnect user from all MUDGame objects
+        for(MUDGame game: this.openGames.values()) {
+            game.disconnect(gameUser.getUserName());
+        }
+        gameUser.quitAllGames();
     }
 
         /**
@@ -101,7 +96,7 @@ public class StubImplementation implements StubInterface {
     @Override
     public String getMessage(User gameUser) throws RemoteException, MUDGameNotFoundException {
         String game = gameUser.getGameFocus();
-        MUDGame gameMessage = openGames.get(game);
+        MUDGame gameMessage = this.openGames.get(game);
         return gameMessage.getMessage(gameUser.getUserName());
     }
 
@@ -113,7 +108,7 @@ public class StubImplementation implements StubInterface {
     @Override
     public String[] getDirections(User gameUser) throws RemoteException, MUDGameNotFoundException {
         String game = gameUser.getGameFocus();
-        MUDGame mudGame = openGames.get(game);
+        MUDGame mudGame = this.openGames.get(game);
         return mudGame.getDirections(gameUser.getUserName());
     }
 
@@ -125,7 +120,7 @@ public class StubImplementation implements StubInterface {
 
     public String[] getPickableThings(User gameUser) throws RemoteException, MUDGameNotFoundException {
         String game = gameUser.getGameFocus();
-        MUDGame mudGame = openGames.get(game);
+        MUDGame mudGame = this.openGames.get(game);
         return mudGame.getPickableThings(gameUser.getUserName());
     }
 
@@ -139,7 +134,7 @@ public class StubImplementation implements StubInterface {
     @Override
     public boolean move(String direction, User gameUser) throws RemoteException, MUDGameNotFoundException {
         String game = gameUser.getGameFocus();
-        MUDGame mudGame = openGames.get(game);
+        MUDGame mudGame = this.openGames.get(game);
         return mudGame.move(direction, gameUser.getUserName());
     }
 
@@ -153,7 +148,7 @@ public class StubImplementation implements StubInterface {
 
     public boolean pick(String thing, User gameUser) throws RemoteException, MUDGameNotFoundException {
         String game = gameUser.getGameFocus();
-        MUDGame mudGame = openGames.get(game);
+        MUDGame mudGame = this.openGames.get(game);
         return mudGame.pick(thing, gameUser.getUserName());
     }
 
@@ -165,7 +160,7 @@ public class StubImplementation implements StubInterface {
     @Override
     public LinkedList<String> getUserInventory(User gameUser) throws RemoteException, MUDGameNotFoundException {
         String game = gameUser.getGameFocus();
-        MUDGame mudGame = openGames.get(game);
+        MUDGame mudGame = this.openGames.get(game);
         return mudGame.getUserInventory(gameUser.getUserName());
     }
 
@@ -177,7 +172,7 @@ public class StubImplementation implements StubInterface {
     @Override
     public String getUserLocation(User gameUser) throws RemoteException, MUDGameNotFoundException {
         String game = gameUser.getGameFocus();
-        MUDGame mudGame = openGames.get(game);
+        MUDGame mudGame = this.openGames.get(game);
         return mudGame.getUserLocation(gameUser.getUserName());
     }
 
@@ -189,7 +184,7 @@ public class StubImplementation implements StubInterface {
     @Override
     public LinkedList<String> getNearUsers(User gameUser) throws RemoteException, MUDGameNotFoundException {
         String game = gameUser.getGameFocus();
-        MUDGame mudGame = openGames.get(game);
+        MUDGame mudGame = this.openGames.get(game);
         return mudGame.getUsersAtLocation(
                 mudGame.getUserLocation(gameUser.getUserName())
         );
@@ -203,9 +198,9 @@ public class StubImplementation implements StubInterface {
 
     public LinkedList<String> getAvailableGames() throws RemoteException {
         LinkedList<String> currentGames = new LinkedList<>();
-        openGames.forEach((gameName, game) -> {
-                currentGames.add(gameName);
-            });
+        this.openGames.forEach((gameName, game) -> {
+            currentGames.add(gameName);
+        });
         return currentGames;
     }
     /**
@@ -215,7 +210,7 @@ public class StubImplementation implements StubInterface {
      */
 
     public String[] getOnlinePlayersAtGame(String gameName) throws RemoteException {
-        MUDGame game = openGames.get(gameName);
+        MUDGame game = this.openGames.get(gameName);
         if(game != null) {
             return game.getOnlinePlayers();
         }
@@ -224,7 +219,7 @@ public class StubImplementation implements StubInterface {
 
     public String[] getOnlinePlayers() throws  RemoteException {
         LinkedList<String> onlinePlayers = new LinkedList<>();
-        openGames.forEach((gameName, game) -> {
+        this.openGames.forEach((gameName, game) -> {
             LinkedList<String> onlinePlayersAtGame = new LinkedList<>(
                 Arrays.asList(
                         game.getOnlinePlayers()
@@ -237,17 +232,8 @@ public class StubImplementation implements StubInterface {
         return onlinePlayers.toArray(new String[0]);
     }
 
-
     //returns the maximum number of Mud games
-
     public Integer getMudMax () {
         return maxMudGames;
     }
-
-
-
-    public StubInterface getServerHandle(){
-        return serverHandle;
-    }
-
 }
