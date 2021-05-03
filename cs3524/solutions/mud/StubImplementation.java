@@ -74,8 +74,11 @@ public class StubImplementation implements StubInterface {
     @Override
     public void disconnect(User gameUser) throws RemoteException, MUDGameNotFoundException {
         // disconnect user from all MUDGame objects
+        String userName = gameUser.getUserName();
         for(MUDGame game: this.openGames.values()) {
-            game.disconnect(gameUser.getUserName());
+            if(game.isUserConnected(userName)) {
+                game.disconnect(gameUser.getUserName());
+            }
         }
         gameUser.quitAllGames();
     }

@@ -27,9 +27,9 @@ public class GameImplementation implements Serializable {
         try {
             StubInterface serverHandle = StubInterface.initServerHandle(port, hostName);
             String userName = getUserInput("Insert your username:");
-            String gameName = chooseOrCreateGame(serverHandle);
-            User gameUser = new User(userName, gameName);
             do {
+                String gameName = chooseOrCreateGame(serverHandle);
+                User gameUser = new User(userName, gameName);
                 GameImplementation userGame = joinServer(serverHandle, gameUser, gameName);
                 runGame(serverHandle, gameUser);
             } while(getUserInput("Do you want to join another game?\nInsert any key to exit or [g] to play again.").equals("g"));///

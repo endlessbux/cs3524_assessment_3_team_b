@@ -47,7 +47,8 @@ public class MUDGame {
      * @param userName
      */
     public void disconnect(String userName) {
-        this.mud.delThing(this.locations.get(userName), userName);
+        String userLocation = this.locations.get(userName);
+        this.mud.delThing(userLocation, userName);
         this.locations.remove(userName);
         this.inventories.remove(userName);
     }
