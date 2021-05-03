@@ -46,8 +46,8 @@
 -   	Load and start the RMI Registry with suitable port.
 -   	Open another Terminal and run the ServerMainline.Java file (The first port should be that of the RMI -           registry).
 -   	Open a third Terminal and run the MUD client
--################################################################################
--####FUNCTIONS  ##### 
+
+-#### FUNCTIONS  ##### 
 -   	MOVEMENT- 
       -  	user can move in at least one direction.
       -  	User can move around in any direction.
@@ -78,18 +78,18 @@
 
     
 -  #### COMMANDS ####
--  MOVE<direction>
-    -  This allows players to change position in the MUD game to supported directions
--  PICK/DROP <item>
-    -  Allows users to pick up items and store them in the inventory.
--  GetUserLocation
-    -  Displays/ prints out current users in the MUD game      
--  getOnlinepLayersatGame
-    -  Displays/ prints out current players on the server.   
--  "h"
-    -  displays the help interface to asssist players with commands
--  "q"
-    -  Quits he game    
+    -  MOVE(direction)
+        -  This allows players to change position in the MUD game to supported directions
+    -  PICK/DROP (item)
+        -  Allows users to pick up items and store them in the inventory.
+    -  GetUserLocation
+        -  Displays/ prints out current users in the MUD game      
+    -  getOnlinepLayersAtGame
+        -  Displays/ prints out current players on the server.   
+    -  "h"
+        -  displays the help interface to asssist players with commands
+    -  "q"
+        -  Quits he game    
     
    
 
