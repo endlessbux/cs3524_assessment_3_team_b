@@ -22,10 +22,10 @@
 - #### CGS A5 (Cat)
     - [x] User can issue a command to create a new MUD game
     - [x] User can join, exit a game and join another one
-    - [ ] User can have multiple games open (game focus)
-    - [ ] The server restricts the number of MUDs
-    - [ ] The server restricts the number of users logged onto a MUD
-    - [ ] Well-organised CLI
+    - [x] User can have multiple games open (game focus)
+    - [x] The server restricts the number of MUDs
+    - [x] The server restricts the number of users logged onto a MUD
+    - [x] Well-organised CLI
 - #### CGS A4-A1 (Thomas)
     - [ ] Console is refreshed automatically when changes occur
     - [ ] Server handles clients aborting, closing, or leaving game
