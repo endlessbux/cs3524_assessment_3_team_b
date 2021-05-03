@@ -36,40 +36,40 @@
 To run the game
 •	Run the ‘Makefile’ in machine Terminal 
 •	The Makefile contains the ‘make mud’ command which compiles all the files of the game 
-o	javac cs3524/solutions/mud/Edge.java
-o	javac cs3524/solutions/mud/MUD.java
-o	javac cs3524/solutions/mud/Vertex.java
-o	javac cs3524/solutions/mud/GameImplementation.java
-o	javac cs3524/solutions/mud/ServerMainline.java
-o	javac cs3524/solutions/mud/StubImplementation.java
-o	javac cs3524/solutions/mud/MUDGame.java
+    o	javac cs3524/solutions/mud/Edge.java
+    o	javac cs3524/solutions/mud/MUD.java
+    o	javac cs3524/solutions/mud/Vertex.java
+    o	javac cs3524/solutions/mud/GameImplementation.java
+    o	javac cs3524/solutions/mud/ServerMainline.java
+    o	javac cs3524/solutions/mud/StubImplementation.java
+    o	javac cs3524/solutions/mud/MUDGame.java
 •	Load and start the RMI Registry with suitable port.
 •	Open another Terminal and run the ServerMainline.Java file using the command …
 •	Open a third Terminal and run the MUD client
 ################################################################################
 ####FUNCTIONS 
 •	MOVEMENT- 
-o	user can move in at least one direction.
-o	User can move around in any direction.
-o	
+    o	user can move in at least one direction.
+    o	User can move around in any direction.
+    o	
 •	LOCATION- 
-o	Start location of every player is printed out.
-o	Information associated with player new location is displayed.
+    o	Start location of every player is printed out.
+    o	Information associated with player new location is displayed.
 •	PICKING-
-o	Players can pick up items.
-o	Items picked up are stored up in inventory
-o	Item picked up by a player is removed from item location.
-o	
+    o	Players can pick up items.
+    o	Items picked up are stored up in inventory
+    o	Item picked up by a player is removed from item location.
+    o	
 •	MULTI-PLAYER MUD-
-o	More than one user can join the MUD game.
-o	Players can see other users in the MUD game.
-o	Players can see other player’s inventories
-o	Users can move around in the MUD
-o	Players can see other players at certain location in the MUD game.
-o	
+    o	More than one user can join the MUD game.
+    o	Players can see other users in the MUD game.
+    o	Players can see other player’s inventories
+    o	Users can move around in the MUD
+    o	Players can see other players at certain location in the MUD game.
+    o	
 •	MULTI-MUD GAME-
-o	More than 1 MUD game is instantiated on the server.
-o	Users can see how many MUD games are currently running on the server.
-o	Users can select any MUD game to join.
-o	Users can Exit playing a particular MUD game on the server.
+    o	More than 1 MUD game is instantiated on the server.
+    o	Users can see how many MUD games are currently running on the server.
+    o	Users can select any MUD game to join.
+    o	Users can Exit playing a particular MUD game on the server.
 
