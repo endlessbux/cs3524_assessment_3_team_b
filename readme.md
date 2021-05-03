@@ -77,7 +77,7 @@
       - 	Users can use the keyword ”h” to get help messages and commands a player may type in.
 
     
--  #### COMMANDS ####
+-   COMMANDS-
     -  MOVE(direction)
         -  This allows players to change position in the MUD game to supported directions
     -  PICK/DROP (item)
