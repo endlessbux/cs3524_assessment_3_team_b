@@ -78,17 +78,17 @@
 
     
 -   COMMANDS-
-    -  MOVE(direction)
+    -  MOVE(direction)-
         -  This allows players to change position in the MUD game to supported directions
-    -  PICK/DROP (item)
+    -  PICK/DROP (item)-
         -  Allows users to pick up items and store them in the inventory.
     -  GetUserLocation
         -  Displays/ prints out current users in the MUD game      
-    -  getOnlinepLayersAtGame
+    -  getOnlinepLayersAtGame-
         -  Displays/ prints out current players on the server.   
-    -  "h"
+    -  "h"-
         -  displays the help interface to asssist players with commands
-    -  "q"
+    -  "q"-
         -  Quits he game    
     
    
