@@ -47,7 +47,8 @@ public class MUDGame {
      * @param userName
      */
     public void disconnect(String userName) {
-        this.mud.delThing(this.locations.get(userName), userName);
+        String userLocation = this.locations.get(userName);
+        this.mud.delThing(userLocation, userName);
         this.locations.remove(userName);
         this.inventories.remove(userName);
     }
@@ -148,6 +149,13 @@ public class MUDGame {
         return (LinkedList<String>)this.inventories.get(userName).clone();
     }
 
+/*
+    public void clearUserInventory(String userName) {
+        LinkedList<String> inventory = this.inventories.get(userName);
+        inventory.clear();
+    }
+*/
+
     /**
      * @param userName
      * @return the location of given user in the MUD
@@ -178,5 +186,9 @@ public class MUDGame {
      */
     public String[] getOnlinePlayers() {
         return this.locations.keySet().toArray(new String[0]);
+    }
+
+    public boolean isUserConnected(String userName) {
+        return this.locations.keySet().contains(userName);
     }
 }

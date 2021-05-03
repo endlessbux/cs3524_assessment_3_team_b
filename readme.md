@@ -30,3 +30,51 @@
     - [ ] Console is refreshed automatically when changes occur
     - [ ] Server handles clients aborting, closing, or leaving game
     - [ ] Players can send messages to each other
+
+ -  ###########################################################################
+ -  #### HOW TO LAUNCH  ######
+   ####To run the game
+-   	Run the ‘Makefile’ in machine Terminal 
+-   	The Makefile contains the ‘make mud’ command which compiles all the files of the game 
+       -	javac cs3524/solutions/mud/Edge.java
+       -	javac cs3524/solutions/mud/MUD.java
+       -	javac cs3524/solutions/mud/Vertex.java
+       -	javac cs3524/solutions/mud/GameImplementation.java
+       -	javac cs3524/solutions/mud/ServerMainline.java
+       -	javac cs3524/solutions/mud/StubImplementation.java
+       -	javac cs3524/solutions/mud/MUDGame.java
+-   	Load and start the RMI Registry with suitable port.
+-   	Open another Terminal and run the ServerMainline.Java file (The first port should be that of the RMI -           registry).
+-   	Open a third Terminal and run the MUD client
+-################################################################################
+-####FUNCTIONS  ##### 
+-   	MOVEMENT- 
+      -  	user can move in at least one direction.
+      -  	User can move around in any direction.
+-   	LOCATION- 
+      -  	Start location of every player is printed out.
+      -  	Information associated with player new location is displayed.
+-   	PICKING-
+      -  	Players can pick up items.
+      -  	Items picked up are stored up in inventory
+      -  	Item picked up by a player is removed from item location.
+      -  	Itemsm Picked can also be dropped by a player
+-   	MULTI-PLAYER MUD-
+      -  	More than one user can join a MUD game.
+      -  	Players can see other users in the MUD game.
+      -  	Players can see other player’s inventories
+      -  	Users can move around in the MUD
+      -  	Players can see other players at certain location in a MUD game.
+    
+-   	MULTI-MUD GAME-
+        o	More than 1 MUD game is instantiated on the server.
+        o	Users can see how many MUD games are currently running on the server.
+        o	Users can select any MUD game to join at a time.
+        o	Users can Exit playing a particular MUD game on the server.
+        o	Users can create new MUD game and change MUD game.
+-   	OTHERS
+        o	users can quit the game with the key word “q”.
+        o	Users can use the keyword ”h” to get help messages and commands a player may type in.
+
+    
+
