@@ -67,14 +67,29 @@
       -  	Players can see other players at certain location in a MUD game.
     
 -   	MULTI-MUD GAME-
-        o	More than 1 MUD game is instantiated on the server.
-        o	Users can see how many MUD games are currently running on the server.
-        o	Users can select any MUD game to join at a time.
-        o	Users can Exit playing a particular MUD game on the server.
-        o	Users can create new MUD game and change MUD game.
+      -	    More than 1 MUD game is instantiated on the server.
+      - 	Users can see how many MUD games are currently running on the server.
+      - 	Users can select any MUD game to join at a time.
+      - 	Users can Exit playing a particular MUD game on the server.
+      - 	Users can create new MUD game and change MUD game.
 -   	OTHERS
-        o	users can quit the game with the key word “q”.
-        o	Users can use the keyword ”h” to get help messages and commands a player may type in.
+      - 	users can quit the game with the key word “q”.
+      - 	Users can use the keyword ”h” to get help messages and commands a player may type in.
 
     
+-  #### COMMANDS ####
+-  MOVE<direction>
+    -  This allows players to change position in the MUD game to supported directions
+-  PICK/DROP <item>
+    -  Allows users to pick up items and store them in the inventory.
+-  GetUserLocation
+    -  Displays/ prints out current users in the MUD game      
+-  getOnlinepLayersatGame
+    -  Displays/ prints out current players on the server.   
+-  "h"
+    -  displays the help interface to asssist players with commands
+-  "q"
+    -  Quits he game    
+    
+   
 
