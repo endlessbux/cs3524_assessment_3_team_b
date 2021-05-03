@@ -34,18 +34,18 @@
    ###########################################################################
    #### HOW TO LAUNCH  ######
 To run the game
-•	Run the ‘Makefile’ in machine Terminal 
-•	The Makefile contains the ‘make mud’ command which compiles all the files of the game 
-    o	javac cs3524/solutions/mud/Edge.java
-    o	javac cs3524/solutions/mud/MUD.java
-    o	javac cs3524/solutions/mud/Vertex.java
-    o	javac cs3524/solutions/mud/GameImplementation.java
-    o	javac cs3524/solutions/mud/ServerMainline.java
-    o	javac cs3524/solutions/mud/StubImplementation.java
-    o	javac cs3524/solutions/mud/MUDGame.java
-•	Load and start the RMI Registry with suitable port.
-•	Open another Terminal and run the ServerMainline.Java file (The first port should be that of the RMI registry).
-•	Open a third Terminal and run the MUD client
+-   •	Run the ‘Makefile’ in machine Terminal 
+-   •	The Makefile contains the ‘make mud’ command which compiles all the files of the game 
+-       o	javac cs3524/solutions/mud/Edge.java
+-       o	javac cs3524/solutions/mud/MUD.java
+-       o	javac cs3524/solutions/mud/Vertex.java
+-       o	javac cs3524/solutions/mud/GameImplementation.java
+-       o	javac cs3524/solutions/mud/ServerMainline.java
+-       o	javac cs3524/solutions/mud/StubImplementation.java
+-       o	javac cs3524/solutions/mud/MUDGame.java
+-   •	Load and start the RMI Registry with suitable port.
+-   •	Open another Terminal and run the ServerMainline.Java file (The first port should be that of the RMI -  -       registry).
+-   •	Open a third Terminal and run the MUD client
 -################################################################################
 ####FUNCTIONS  ##### 
 •	MOVEMENT- 
