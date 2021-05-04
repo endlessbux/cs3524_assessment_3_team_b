@@ -31,34 +31,38 @@
     - [ ] Server handles clients aborting, closing, or leaving game
     - [ ] Players can send messages to each other
 
- ## HOW TO LAUNCH
- To run the game:
--   	Run the ‘Makefile’ in Terminal by typing 'make mud' 
--   	The Makefile contains the ‘make mud’ command which compiles all the files of the game 
-       -	javac cs3524/solutions/mud/Edge.java
-       -	javac cs3524/solutions/mud/MUD.java
-       -	javac cs3524/solutions/mud/Vertex.java
-       -	javac cs3524/solutions/mud/GameImplementation.java
-       -	javac cs3524/solutions/mud/ServerMainline.java
-       -	javac cs3524/solutions/mud/StubImplementation.java
-       -	javac cs3524/solutions/mud/MUDGame.java
--   	Load and start the RMI Registry with a suitable port such as 50010.
--   	Open another Terminal and run the ServerMainline file by typing java cs3524.solutions.mud.ServerMainline [port] [port] (The first port should be that of the RMI registry) and the second can be one such as 50019
--   	Open a third Terminal window and run the MUD client by typing java cs3524.solutions.mud.GameImplementation [hostname] 50010
+
+## Multi User Dungeon game created using Java RMI
+
+This game was created for the final assignment of CS3524
+
+##### HOW TO LAUNCH
+To run the game:
+
+1. Run the ‘Makefile’ in Terminal by typing 'make mud'
+
+
+2. Start the RMI registry with a suitable port such as 50010 'rmiregistry 50010'
+
+
+3. Open another Terminal and run the ServerMainline file by typing 'java cs3524.solutions.mud.ServerMainline [port] [port]' (The first port should be that of the RMI registry) and the second can be one such as 50019
+
+
+4. Open a third Terminal window and run the MUD client by typing 'java cs3524.solutions.mud.GameImplementation [hostname] 50010'
 
 ## FUNCTIONS
--   	MOVEMENT- 
+-   	MOVEMENT
       -  	user can move in at least one direction.
       -  	User can move around in any direction.
--   	LOCATION- 
+-   	LOCATION
       -  	Start location of every player is printed out.
       -  	Information associated with player new location is displayed.
--   	PICKING-
+-   	PICKING
       -  	Players can pick up items.
       -  	Items picked up are stored up in inventory
       -  	Item picked up by a player is removed from item location.
       -  	Itemsm Picked can also be dropped by a player
--   	MULTI-PLAYER MUD-
+-   	MULTI-PLAYER MUD
       -  	More than one user can join a MUD game.
       -  	Players can see other users in the MUD game.
       -  	Players can see other player’s inventories
