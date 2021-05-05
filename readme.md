@@ -53,7 +53,7 @@ This game was created for the final assignment of CS3524.
 ###### Movement
 * User can move around in any direction.
 ###### Location
-* Start location of every player is printed out.
+* Start location of every player is printed out
 * Information associated with player new location is displayed
 ###### Picking
 * Players can pick up items
@@ -70,7 +70,7 @@ This game was created for the final assignment of CS3524.
 * Users can see how many MUD games are currently running on the server
 * Users can select any MUD game to join
 * Users can quit playing a particular MUD game on the server
-* Users can create a new MUD game and change MUD game
+* Users can create a new MUD game and change MUD game by quitting and rejoining desired game
 ###### Other
 * Users can quit the game with the command “q”
 * Users can show available commands with the keyword 'h'
@@ -98,7 +98,7 @@ This game was created for the final assignment of CS3524.
 * Displays the help interface to assist players with commands
 ###### n
 * Starts a new game and asks for the name of the game you want to create
-###### s
+###### s DOES NOT CURRENTLY WORK
 * Asks the user to input the name of the game they want to join   
 ###### q
 * Quits the game and asks the user if they would like to join another game, play again or quit completely    
