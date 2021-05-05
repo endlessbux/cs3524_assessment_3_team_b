@@ -1,9 +1,6 @@
 package cs3524.solutions.mud;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Serializable;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -155,12 +152,16 @@ public class GameImplementation implements Serializable {
                     break;
                 case "n":
                     //create new game
-                    String gameName3 = getUserInput("Insert the name of the game you want to create");
-                    serverHandle.createNewGame(gameName3);
-                    serverHandle.connect(gameUser, gameName3);
-                    gameUser.addGameToPool(gameName3);
-                    gameUser.switchGameFocus(gameName3);
-                    System.out.println("Creating new game...");
+                    if(gameUser.canCreateAnotherGame()) {
+                        String gameName3 = getUserInput("Insert the name of the game you want to create");
+                        serverHandle.createNewGame(gameName3);
+                        serverHandle.connect(gameUser, gameName3);
+                        gameUser.addGameToPool(gameName3);
+                        gameUser.switchGameFocus(gameName3);
+                        System.out.println("Creating new game...");
+                    } else {
+                        System.out.println("You reached the maximum amount of open games.\nNew game creation aborted.");
+                    }
                     break;
                 case "":
                     // refresh

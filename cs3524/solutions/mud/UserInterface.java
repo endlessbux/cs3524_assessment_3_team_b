@@ -13,4 +13,5 @@ public interface UserInterface extends Remote {
     public void quitAllGames();
     public String getUserName();
     public String getGameFocus();
+    public boolean canCreateAnotherGame();
 }

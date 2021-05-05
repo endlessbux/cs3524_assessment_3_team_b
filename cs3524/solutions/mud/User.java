@@ -42,13 +42,6 @@ public class User implements UserInterface, Serializable {
         return false;
     }
 
-    public boolean isGameInPool(String gameName) {
-        if(this.gamePool.contains(gameName)) {
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public void quitGame() {
         this.gamePool.remove(this.gameFocus);
@@ -57,8 +50,8 @@ public class User implements UserInterface, Serializable {
 
     @Override
     public void quitAllGames() {
-        for(String game: this.gamePool) {
-            this.quitGame();
+        for(int i = 0; i < this.gamePool.size(); i++) {
+            this.gamePool.remove(i);
         }
     }
 
@@ -74,6 +67,11 @@ public class User implements UserInterface, Serializable {
     @Override
     public String getGameFocus() {
         return this.gamePool.get(this.gameFocus);
+    }
+
+    @Override
+    public boolean canCreateAnotherGame() {
+        return this.maxGames >= this.gamePool.size();
     }
 
 }

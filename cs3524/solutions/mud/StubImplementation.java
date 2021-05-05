@@ -24,10 +24,8 @@ public class StubImplementation implements StubInterface {
      */
     @Override
     public boolean createNewGame(String gameName) throws RemoteException {
-        StubImplementation stubImp = new StubImplementation();
-        LinkedList<String> currentGames = stubImp.getAvailableGames();
-        if (currentGames.size() < this.maxMudGames) {
-            if(!currentGames.contains(gameName)) {
+        if (this.openGames.size() < this.maxMudGames) {
+            if(!this.openGames.keySet().contains(gameName)) {
                 this.openGames.put(gameName, new MUDGame());
                 return true;
             }
@@ -53,7 +51,7 @@ public class StubImplementation implements StubInterface {
     }
 
     /**
-     * Disconnects the user from all the games it's connected to
+     * Disconnects the user from all the open mud games
      * @param gameUser
      * @throws RemoteException
      */
@@ -63,7 +61,7 @@ public class StubImplementation implements StubInterface {
         String userName = gameUser.getUserName();
         for(MUDGame game: this.openGames.values()) {
             if(game.isUserConnected(userName)) {
-                game.disconnect(gameUser.getUserName());
+                game.disconnect(userName);
             }
         }
         gameUser.quitAllGames();
@@ -76,9 +74,11 @@ public class StubImplementation implements StubInterface {
      */
     @Override
     public String getMessage(User gameUser) throws RemoteException {
-        String game = gameUser.getGameFocus();
-        MUDGame gameMessage = this.openGames.get(game);
-        return gameMessage.getMessage(gameUser.getUserName());
+        String gameName = gameUser.getGameFocus();
+        MUDGame openGame = this.openGames.get(gameName);
+        String message = "OPEN GAME: " + gameName;
+        message += openGame.getMessage(gameUser.getUserName());
+        return message;
     }
 
     /**
