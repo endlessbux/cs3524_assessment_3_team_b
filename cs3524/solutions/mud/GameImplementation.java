@@ -40,8 +40,6 @@ public class GameImplementation implements Serializable {
             // not sure what to print here apart from the exception message
             //System.err.println("There was an issue with the input.");
             System.err.println(e.getMessage());
-        } catch (MUDGameNotFoundException e) {
-            System.err.println("Your request could not be processed because the MUD is offline.\nJoin a different MUD.");
         } catch (NotBoundException e) {
             System.err.println("Something has gone wrong...");
             System.err.println(e.getMessage());
@@ -130,9 +128,8 @@ public class GameImplementation implements Serializable {
      * @param serverHandle
      * @param gameUser
      * @throws IOException
-     * @throws MUDGameNotFoundException
      */
-    private static void runGame(StubInterface serverHandle, User gameUser) throws IOException, MUDGameNotFoundException {
+    private static void runGame(StubInterface serverHandle, User gameUser) throws IOException {
         System.out.println("Game started!");
         String chooseSomething;
         boolean gameOver = false;
@@ -216,9 +213,9 @@ public class GameImplementation implements Serializable {
      * @param serverHandle
      * @param choice
      * @return the result message of the user action
-     * @throws RemoteException,MUDGameNotFoundException
+     * @throws RemoteException
      */
-    private static String doAction(User gameUser, StubInterface serverHandle, String choice) throws RemoteException, MUDGameNotFoundException {
+    private static String doAction(User gameUser, StubInterface serverHandle, String choice) throws RemoteException {
         String actionResult = String.format("Internal error:\nCould not perform '%s'. Try again.", choice);
         String[] action = getAction(choice);
         String userName = gameUser.getUserName();
@@ -265,9 +262,8 @@ public class GameImplementation implements Serializable {
      * @param choice
      * @return true if the inputted action is available, false otherwise
      * @throws RemoteException
-     * @throws MUDGameNotFoundException
      */
-    private static boolean isActionAvailable(User gameUser, StubInterface serverHandle, String choice) throws RemoteException, MUDGameNotFoundException {
+    private static boolean isActionAvailable(User gameUser, StubInterface serverHandle, String choice) throws RemoteException {
         boolean isActionAvailable = false;
         String[] action = getAction(choice);
         switch (action[0]) {
@@ -295,9 +291,8 @@ public class GameImplementation implements Serializable {
      * @param toTestInput
      * @return true if toTestInput is an available direction, false otherwise
      * @throws RemoteException
-     * @throws MUDGameNotFoundException
      */
-    private static boolean isThingAvailable(User gameUser, StubInterface serverHandle, String toTestInput) throws RemoteException, MUDGameNotFoundException {
+    private static boolean isThingAvailable(User gameUser, StubInterface serverHandle, String toTestInput) throws RemoteException {
         boolean isPickable = false;
         String userName = gameUser.getUserName();
         String[] pickableThings = serverHandle.getPickableThings(gameUser);
@@ -315,9 +310,8 @@ public class GameImplementation implements Serializable {
      * @param toTestInput
      * @return true if toTestInput is an available direction, false otherwise
      * @throws RemoteException
-     * @throws MUDGameNotFoundException
      */
-    private static boolean isDirectionAvailable(User gameUser, StubInterface serverHandle, String toTestInput) throws RemoteException, MUDGameNotFoundException {
+    private static boolean isDirectionAvailable(User gameUser, StubInterface serverHandle, String toTestInput) throws RemoteException {
         boolean isAvailable = false;
         String[] availableDirections = serverHandle.getDirections(gameUser);
         for(String direction: availableDirections) {
@@ -386,9 +380,8 @@ public class GameImplementation implements Serializable {
      * @param gameUser
      * @return a printable output to display the available actions that the user can take
      * @throws RemoteException
-     * @throws MUDGameNotFoundException
      */
-    private static String getPrintableActions(StubInterface serverHandle, User gameUser) throws RemoteException, MUDGameNotFoundException {
+    private static String getPrintableActions(StubInterface serverHandle, User gameUser) throws RemoteException {
         String printableActions = "";
         String userName = gameUser.getUserName();
         String location = serverHandle.getUserLocation(gameUser);
@@ -457,9 +450,8 @@ public class GameImplementation implements Serializable {
      * @param gameUser
      * @return game output string
      * @throws RemoteException
-     * @throws MUDGameNotFoundException
      */
-    private static String getUserGameOutput(StubInterface serverHandle, User gameUser) throws RemoteException, MUDGameNotFoundException {
+    private static String getUserGameOutput(StubInterface serverHandle, User gameUser) throws RemoteException {
         String message = serverHandle.getMessage(gameUser);
         return String.format(
                 "%sMake a move:\n(type 'h' to show available commands, 'n' for a new game, 's' to switch games, or 'q' to quit the game.)",
@@ -472,10 +464,9 @@ public class GameImplementation implements Serializable {
      * @param gameUser
      * @return the list of items in the specified user's inventory
      * @throws RemoteException
-     * @throws MUDGameNotFoundException
      */
 
-    public LinkedList<String> getInventoryFromUser(StubInterface serverHandle, User gameUser) throws RemoteException, MUDGameNotFoundException {
+    public LinkedList<String> getInventoryFromUser(StubInterface serverHandle, User gameUser) throws RemoteException {
         return serverHandle.getUserInventory(gameUser);
     }
 
@@ -485,10 +476,9 @@ public class GameImplementation implements Serializable {
      * @param object
      * @return true if the object was picked, false otherwise
      * @throws RemoteException
-     * @throws MUDGameNotFoundException
      */
 
-    public boolean pick(StubInterface serverHandle, String object, User gameUser) throws RemoteException, MUDGameNotFoundException {
+    public boolean pick(StubInterface serverHandle, String object, User gameUser) throws RemoteException {
         return serverHandle.pick(object, gameUser);
     }
 

@@ -17,20 +17,6 @@ public class StubImplementation implements StubInterface {
     }
 
     /**
-     * @param gameUser
-     * @return the MUDGame object to which the user is connected
-     * @throws RemoteException
-     */
-    public static LinkedList getGamesFromUserName(User gameUser) throws RemoteException, MUDGameNotFoundException {
-        LinkedList gameNames = gameUser.getUserGamePool();
-        if(gameNames == null) {
-            throw new MUDGameNotFoundException();
-        }
-        return gameNames;
-    }
-
-
-    /**
      * Checks if max mud games has been reached and checks to see if game already exists before creating game
      * @param gameName
      * @return true if the MUD game was created, false otherwise
@@ -72,7 +58,7 @@ public class StubImplementation implements StubInterface {
      * @throws RemoteException
      */
     @Override
-    public void disconnect(User gameUser) throws RemoteException, MUDGameNotFoundException {
+    public void disconnect(User gameUser) throws RemoteException {
         // disconnect user from all MUDGame objects
         String userName = gameUser.getUserName();
         for(MUDGame game: this.openGames.values()) {
@@ -86,10 +72,10 @@ public class StubImplementation implements StubInterface {
         /**
      * @param gameUser
      * @return the message to be printed to the user based on its location
-     * @throws RemoteException,MUDGameNotFoundException
+     * @throws RemoteException
      */
     @Override
-    public String getMessage(User gameUser) throws RemoteException, MUDGameNotFoundException {
+    public String getMessage(User gameUser) throws RemoteException {
         String game = gameUser.getGameFocus();
         MUDGame gameMessage = this.openGames.get(game);
         return gameMessage.getMessage(gameUser.getUserName());
@@ -98,10 +84,10 @@ public class StubImplementation implements StubInterface {
     /**
      * @param gameUser
      * @return an array of directions towards which the user can move
-     * @throws RemoteException,MUDGameNotFoundException
+     * @throws RemoteException
      */
     @Override
-    public String[] getDirections(User gameUser) throws RemoteException, MUDGameNotFoundException {
+    public String[] getDirections(User gameUser) throws RemoteException {
         String game = gameUser.getGameFocus();
         MUDGame mudGame = this.openGames.get(game);
         return mudGame.getDirections(gameUser.getUserName());
@@ -110,10 +96,10 @@ public class StubImplementation implements StubInterface {
     /**
      * @param gameUser
      * @return things available at given user's location
-     * @throws RemoteException,MUDGameNotFoundException
+     * @throws RemoteException
      */
 
-    public String[] getPickableThings(User gameUser) throws RemoteException, MUDGameNotFoundException {
+    public String[] getPickableThings(User gameUser) throws RemoteException {
         String game = gameUser.getGameFocus();
         MUDGame mudGame = this.openGames.get(game);
         return mudGame.getPickableThings(gameUser.getUserName());
@@ -124,10 +110,10 @@ public class StubImplementation implements StubInterface {
      * @param direction the direction towards which the user will be moved
      * @param gameUser the user to be moved
      * @return true if the user was moved successfully, false otherwise
-     * @throws RemoteException,MUDGameNotFoundException
+     * @throws RemoteException
      */
     @Override
-    public boolean move(String direction, User gameUser) throws RemoteException, MUDGameNotFoundException {
+    public boolean move(String direction, User gameUser) throws RemoteException {
         String game = gameUser.getGameFocus();
         MUDGame mudGame = this.openGames.get(game);
         return mudGame.move(direction, gameUser.getUserName());
@@ -138,10 +124,10 @@ public class StubImplementation implements StubInterface {
      * @param thing
      * @param gameUser
      * @return true if the specified thing was picked, false otherwise
-     * @throws RemoteException,MUDGameNotFoundException
+     * @throws RemoteException
      */
 
-    public boolean pick(String thing, User gameUser) throws RemoteException, MUDGameNotFoundException {
+    public boolean pick(String thing, User gameUser) throws RemoteException {
         String game = gameUser.getGameFocus();
         MUDGame mudGame = this.openGames.get(game);
         return mudGame.pick(thing, gameUser.getUserName());
@@ -150,10 +136,10 @@ public class StubImplementation implements StubInterface {
     /**
      * @param gameUser
      * @return inventory of the specified user
-     * @throws RemoteException,MUDGameNotFoundException
+     * @throws RemoteException
      */
     @Override
-    public LinkedList<String> getUserInventory(User gameUser) throws RemoteException, MUDGameNotFoundException {
+    public LinkedList<String> getUserInventory(User gameUser) throws RemoteException {
         String game = gameUser.getGameFocus();
         MUDGame mudGame = this.openGames.get(game);
         return mudGame.getUserInventory(gameUser.getUserName());
@@ -162,10 +148,10 @@ public class StubImplementation implements StubInterface {
     /**
      * @param gameUser
      * @return the location of given user in the MUD
-     * @throws RemoteException,MUDGameNotFoundException
+     * @throws RemoteException
      */
     @Override
-    public String getUserLocation(User gameUser) throws RemoteException, MUDGameNotFoundException {
+    public String getUserLocation(User gameUser) throws RemoteException {
         String game = gameUser.getGameFocus();
         MUDGame mudGame = this.openGames.get(game);
         return mudGame.getUserLocation(gameUser.getUserName());
@@ -174,10 +160,10 @@ public class StubImplementation implements StubInterface {
     /**
      * @param gameUser the username of the user at location which will be checked
      * @return a list of usernames at the same location as specified user
-     * @throws RemoteException,MUDGameNotFoundException
+     * @throws RemoteException
      */
     @Override
-    public LinkedList<String> getNearUsers(User gameUser) throws RemoteException, MUDGameNotFoundException {
+    public LinkedList<String> getNearUsers(User gameUser) throws RemoteException {
         String game = gameUser.getGameFocus();
         MUDGame mudGame = this.openGames.get(game);
         return mudGame.getUsersAtLocation(

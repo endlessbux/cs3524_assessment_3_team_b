@@ -27,28 +27,28 @@ public interface StubInterface extends Remote {
     public boolean connect(User gameUser, String gameName) throws RemoteException;
 
     // disconnect client from currently connected server
-    public void disconnect(User gameUser) throws RemoteException, MUDGameNotFoundException;
+    public void disconnect(User gameUser) throws RemoteException;
 
     // get user message
-    public String getMessage(User gameUser) throws RemoteException, MUDGameNotFoundException;
+    public String getMessage(User gameUser) throws RemoteException;
 
     // get user available directions
-    public String[] getDirections(User gameUser) throws RemoteException, MUDGameNotFoundException;
+    public String[] getDirections(User gameUser) throws RemoteException;
 
     // get a list of things that can be picked
-    public String[] getPickableThings(User gameUser) throws RemoteException, MUDGameNotFoundException;
+    public String[] getPickableThings(User gameUser) throws RemoteException;
 
     // move the user towards a given direction
-    public boolean move(String direction, User gameUser) throws RemoteException, MUDGameNotFoundException;
+    public boolean move(String direction, User gameUser) throws RemoteException;
 
     // user picks an object at location
-    public boolean pick(String object, User gameUser) throws RemoteException, MUDGameNotFoundException;
+    public boolean pick(String object, User gameUser) throws RemoteException;
 
-    public LinkedList<String> getUserInventory(User gameUser) throws RemoteException, MUDGameNotFoundException;
+    public LinkedList<String> getUserInventory(User gameUser) throws RemoteException;
 
-    public String getUserLocation(User gameUser) throws RemoteException, MUDGameNotFoundException;
+    public String getUserLocation(User gameUser) throws RemoteException;
 
-    public LinkedList<String> getNearUsers(User gameUser) throws RemoteException, MUDGameNotFoundException;
+    public LinkedList<String> getNearUsers(User gameUser) throws RemoteException;
 
     public String[] getOnlinePlayersAtGame(String gameName) throws RemoteException;
 
