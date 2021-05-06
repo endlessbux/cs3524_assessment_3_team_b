@@ -92,14 +92,15 @@ This game was created for the final assignment of CS3524.
 ###### show-inventory (playername)
 * Prints out the specified players inventory
 
-###### pick ring
-* Picks ring
 ###### h
 * Displays the help interface to assist players with commands
+
 ###### n
 * Starts a new game and asks for the name of the game you want to create
-###### s DOES NOT CURRENTLY WORK
-* Asks the user to input the name of the game they want to join   
+
+###### s
+* Asks the user to input the name of the game they want to join 
+  
 ###### q
 * Quits the game and asks the user if they would like to join another game, play again or quit completely    
     
