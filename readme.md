@@ -31,65 +31,77 @@
     - [ ] Server handles clients aborting, closing, or leaving game
     - [ ] Players can send messages to each other
 
- -  ###########################################################################
- -  #### HOW TO LAUNCH  ######
-   ####To run the game
--   	Run the ‘Makefile’ in machine Terminal 
--   	The Makefile contains the ‘make mud’ command which compiles all the files of the game 
-       -	javac cs3524/solutions/mud/Edge.java
-       -	javac cs3524/solutions/mud/MUD.java
-       -	javac cs3524/solutions/mud/Vertex.java
-       -	javac cs3524/solutions/mud/GameImplementation.java
-       -	javac cs3524/solutions/mud/ServerMainline.java
-       -	javac cs3524/solutions/mud/StubImplementation.java
-       -	javac cs3524/solutions/mud/MUDGame.java
--   	Load and start the RMI Registry with suitable port.
--   	Open another Terminal and run the ServerMainline.Java file (The first port should be that of the RMI -           registry).
--   	Open a third Terminal and run the MUD client
 
--#### FUNCTIONS  ##### 
--   	MOVEMENT- 
-      -  	user can move in at least one direction.
-      -  	User can move around in any direction.
--   	LOCATION- 
-      -  	Start location of every player is printed out.
-      -  	Information associated with player new location is displayed.
--   	PICKING-
-      -  	Players can pick up items.
-      -  	Items picked up are stored up in inventory
-      -  	Item picked up by a player is removed from item location.
-      -  	Itemsm Picked can also be dropped by a player
--   	MULTI-PLAYER MUD-
-      -  	More than one user can join a MUD game.
-      -  	Players can see other users in the MUD game.
-      -  	Players can see other player’s inventories
-      -  	Users can move around in the MUD
-      -  	Players can see other players at certain location in a MUD game.
-    
--   	MULTI-MUD GAME-
-      -	    More than 1 MUD game is instantiated on the server.
-      - 	Users can see how many MUD games are currently running on the server.
-      - 	Users can select any MUD game to join at a time.
-      - 	Users can Exit playing a particular MUD game on the server.
-      - 	Users can create new MUD game and change MUD game.
--   	OTHERS
-      - 	users can quit the game with the key word “q”.
-      - 	Users can use the keyword ”h” to get help messages and commands a player may type in.
+# Multi User Dungeon game created using Java RMI
+
+This game was created for the final assignment of CS3524.
+
+## How to launch
+
+1. Run the ‘Makefile’ in Terminal by typing 'make mud'
+
+
+2. Start the RMI registry with a suitable port such as 50010 'rmiregistry 50010'
+
+
+3. Open another Terminal and run the ServerMainline file by typing 'java cs3524.solutions.mud.ServerMainline [port] [port]' (The first port should be that of the RMI registry) and the second can be one such as 50019
+
+
+4. Open a third Terminal window and run the MUD client by typing 'java cs3524.solutions.mud.GameImplementation [hostname] 50010'
+
+## Functions
+###### Movement
+* User can move around in any direction.
+###### Location
+* Start location of every player is printed out
+* Information associated with player new location is displayed
+###### Picking
+* Players can pick up items
+* Items picked up are stored in the users inventory
+* Items picked up by a player are removed from the item location
+###### Multiplayer MUD
+* More than one user can join a MUD game
+* Players can see other users in the MUD game
+* Players can see other player’s inventories
+* Users can move around in the MUD
+* Players can see other players at certain location in a MUD game
+###### Multi-MUD Game
+* More than 1 MUD game can be instantiated on the server
+* Users can see how many MUD games are currently running on the server
+* Users can select any MUD game to join
+* Users can quit playing a particular MUD game on the server
+* Users can create a new MUD game and change MUD game by quitting and rejoining desired game
+###### Other
+* Users can quit the game with the command “q”
+* Users can show available commands with the keyword 'h'
 
     
--   COMMANDS
-    -  MOVE(direction)
-        -  This allows players to change position in the MUD game to supported directions
-    -  PICK/DROP (item)
-        -  Allows users to pick up items and store them in the inventory.
-    -  GetUserLocation
-        -  Displays/ prints out current users in the MUD game      
-    -  getOnlinepLayersAtGame
-        -  Displays/ prints out current players on the server.   
-    -  "h"
-        -  displays the help interface to asssist players with commands
-    -  "q"
-        -  Quits he game    
+## Commands
+###### move (direction)
+* This allows players to change position in the MUD game to supported directions
+
+###### pick/drop (item)
+* Allows users to pick up items and store them in the inventory
+
+###### show-user-location
+* Prints out current users in the MUD game  
+   
+###### show-online-players
+* Prints out current players on the server
+
+###### show-inventory (playername)
+* Prints out the specified players inventory
+
+###### pick ring
+* Picks ring
+###### h
+* Displays the help interface to assist players with commands
+###### n
+* Starts a new game and asks for the name of the game you want to create
+###### s DOES NOT CURRENTLY WORK
+* Asks the user to input the name of the game they want to join   
+###### q
+* Quits the game and asks the user if they would like to join another game, play again or quit completely    
     
    
 
