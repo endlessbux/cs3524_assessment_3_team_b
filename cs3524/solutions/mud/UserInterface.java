@@ -9,7 +9,7 @@ public interface UserInterface extends Remote {
 
     public boolean addGameToPool(String gameName);
     public boolean switchGameFocus(String gameName);
-    public void quitGame();
+    public boolean quitGame(String oldGame, String newGame);
     public void quitAllGames();
     public String getUserName();
     public String getGameFocus();

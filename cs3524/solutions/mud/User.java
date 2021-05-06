@@ -43,9 +43,13 @@ public class User implements UserInterface, Serializable {
     }
 
     @Override
-    public void quitGame() {
-        this.gamePool.remove(this.gameFocus);
-        this.gameFocus = 0;
+    public boolean quitGame(String oldGame, String newGame) {
+        if (switchGameFocus(newGame)) {
+            if (!gamePool.contains(oldGame)) {
+                return this.gamePool.remove(oldGame);
+            }
+        }
+            return false;
     }
 
     @Override

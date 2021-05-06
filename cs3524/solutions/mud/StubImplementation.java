@@ -30,6 +30,7 @@ public class StubImplementation implements StubInterface {
                 return true;
             }
         }
+        System.out.println("The maximum number of games has been created.");
         return false;
     }
 

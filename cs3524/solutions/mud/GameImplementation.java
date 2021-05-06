@@ -163,6 +163,13 @@ public class GameImplementation implements Serializable {
                         System.out.println("You reached the maximum amount of open games.\nNew game creation aborted.");
                     }
                     break;
+                case "c":
+                    //quit current game
+                    clearScreen();
+                    printOpenGames(serverHandle);
+                    String gameName4 = getUserInput("INSERT the name of the game you want to join");
+                    gameUser.quitGame(gameUser.getGameFocus(),gameName4);
+                    break;
                 case "":
                     // refresh
                     System.out.println("Refreshing...");
@@ -459,7 +466,7 @@ public class GameImplementation implements Serializable {
     private static String getUserGameOutput(StubInterface serverHandle, User gameUser) throws RemoteException {
         String message = serverHandle.getMessage(gameUser);
         return String.format(
-                "%sMake a move:\n(type 'h' to show available commands, 'n' for a new game, 's' to switch games, or 'q' to quit the game.)",
+                "%sMake a move:\n(type 'h' to show available commands, 'n' for a new game, 's' to switch games, 'c' to quit current game, or 'q' to quit Mud Game.)",
                 message
         );
     }
