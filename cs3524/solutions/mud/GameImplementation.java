@@ -233,7 +233,9 @@ public class GameImplementation implements Serializable {
                 }
                 break;
             case "show-inventory":
-                LinkedList<String> inputUserInventory = serverHandle.getUserInventory(gameUser);
+                String inputUserName = action[1];
+                User inputUser = new User(inputUserName, gameUser.getGameFocus());
+                LinkedList<String> inputUserInventory = serverHandle.getUserInventory(inputUser);
                 actionResult = String.format("%s's inventory:\n", action[1]);
                 actionResult += getPrintableInventory(inputUserInventory);
                 break;
@@ -276,7 +278,9 @@ public class GameImplementation implements Serializable {
                 break;
             case "show-inventory":
                 String userLocation = serverHandle.getUserLocation(gameUser);
-                String inputUserLocation = serverHandle.getUserLocation(gameUser);
+                String userName = action[1];
+                User inputUser = new User(userName, gameUser.getGameFocus());
+                String inputUserLocation = serverHandle.getUserLocation(inputUser);
                 isActionAvailable = userLocation.equals(inputUserLocation);
                 break;
             case "show-online-players":
