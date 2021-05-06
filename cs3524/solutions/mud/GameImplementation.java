@@ -163,6 +163,13 @@ public class GameImplementation implements Serializable {
                         System.out.println("You reached the maximum amount of open games.\nNew game creation aborted.");
                     }
                     break;
+                case "c":
+                    //quit current game
+                    clearScreen();
+                    printOpenGames(serverHandle);
+                    String gameName4 = getUserInput("INSERT the name of the game you want to join");
+                    gameUser.quitGame(gameUser.getGameFocus(),gameName4);
+                    break;
                 case "":
                     // refresh
                     System.out.println("Refreshing...");
