@@ -14,19 +14,19 @@
     - [x] Users can see other players' inventories
     - [x] When an item is picked by a user it's removed from location
     - [x] Help command to show what commands are available and how to use them
-- #### CGS B3-B1 (Valerio)
+- #### CGS B3-B1 
     - [x] More than one MUD game is instantiated by the game server
     - [x] User can see what MUD games are currently running on the server
     - [x] User can select a MUD game to join for game playing
     - [x] User can leave a MUD and end playing the MUD game
-- #### CGS A5 (Cat)
+- #### CGS A5
     - [x] User can issue a command to create a new MUD game
     - [x] User can join, exit a game and join another one
     - [x] User can have multiple games open (game focus)
     - [x] The server restricts the number of MUDs
     - [x] The server restricts the number of users logged onto a MUD
     - [x] Well-organised CLI
-- #### CGS A4-A1 (Thomas)
+- #### CGS A4-A1
     - [ ] Console is refreshed automatically when changes occur
     - [ ] Server handles clients aborting, closing, or leaving game
     - [ ] Players can send messages to each other
@@ -51,7 +51,7 @@ This game was created for the final assignment of CS3524.
 
 ## Functions
 ###### Movement
-* User can move around in any direction.
+* User can move around in any direction
 ###### Location
 * Start location of every player is printed out
 * Information associated with player new location is displayed
@@ -62,7 +62,7 @@ This game was created for the final assignment of CS3524.
 ###### Multiplayer MUD
 * More than one user can join a MUD game
 * Players can see other users in the MUD game
-* Players can see other player’s inventories
+* Players can see other players inventories
 * Users can move around in the MUD
 * Players can see other players at certain location in a MUD game
 ###### Multi-MUD Game
@@ -72,24 +72,25 @@ This game was created for the final assignment of CS3524.
 * Users can quit playing a particular MUD game on the server
 * Users can create a new MUD game and change MUD game by quitting and rejoining desired game
 ###### Other
-* Users can quit the game with the command “q”
+* Users can quit the MUD with the command 'q'
+* Users can quit the current game with the command 'c'
 * Users can show available commands with the keyword 'h'
 
     
 ## Commands
-###### move (direction)
+###### move [direction]
 * This allows players to change position in the MUD game to supported directions
 
-###### pick/drop (item)
+###### pick [item]
 * Allows users to pick up items and store them in the inventory
 
-###### show-user-location
+###### show-user-location CURRENTLY DOES NOTHING
 * Prints out current users in the MUD game  
    
 ###### show-online-players
 * Prints out current players on the server
 
-###### show-inventory (playername)
+###### show-inventory [playername]
 * Prints out the specified players inventory
 
 ###### h
@@ -98,11 +99,13 @@ This game was created for the final assignment of CS3524.
 ###### n
 * Starts a new game and asks for the name of the game you want to create
 
+###### c
+* Quits the current game
+
 ###### s
 * Asks the user to input the name of the game they want to join 
   
 ###### q
-* Quits the game and asks the user if they would like to join another game, play again or quit completely    
+* Quits the MUD and asks the user if they would like to join another game, play again or quit completely    
     
    
-
